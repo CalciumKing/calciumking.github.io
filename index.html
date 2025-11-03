@@ -21,38 +21,45 @@
 		<script src="script.js" defer></script>
 	</head>
 	<body>
-		<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-			<a class="navbar-brand" href="#">
-				<img src="img/umb_logo.jpg" class="d-inline-block align-top" alt="UMB Logo">
-				Landen Ingerslev
-			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			
-			
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav ml-auto text-right">
-					<li class="nav-item active">
-						<div class="dropdown show">
-							<a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-							   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								Home
-							</a>
-							
-							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-								<a class="dropdown-item" href="#description">Description</a>
-								<a class="dropdown-item" href="#experience">Experience</a>
-								<a class="dropdown-item" href="#projects">Projects</a>
-								<a class="dropdown-item" href="#contact">Contact</a>
+		<header>
+			<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+				<a class="navbar-brand" href="#">
+					<img src="img/umb_logo.jpg" class="d-inline-block align-top" alt="UMB Logo">
+					Landen Ingerslev
+				</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+						aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				
+				
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav ml-auto text-right">
+						<li class="nav-item active">
+							<div class="dropdown show">
+								<a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+								   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									Home
+								</a>
+								
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+									<a class="dropdown-item" href="#description">Description</a>
+									<a class="dropdown-item" href="#experience">Experience</a>
+									<a class="dropdown-item" href="#projects">Projects</a>
+									<a class="dropdown-item" href="#contact">Contact</a>
+								</div>
 							</div>
-						</div>
-					</li>
-				</ul>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<div id="progressContainer">
+				<span id="progressBar"></span>
 			</div>
-		</nav>
-		
+			<div id="toTopButton">
+				<a href="#">^</a>
+			</div>
+		</header>
 		<main class="container">
 			<div class="row">
 				<div class="col-lg-8 col-md-8">
@@ -151,7 +158,7 @@
 					</div>
 				</div>
 				
-				<div class="col card ml-5 mr-5" style="width: 20rem;">
+				<div class="col card" style="width: 20rem;">
 					<img src="img/slac.png" class="card-img-top" alt="">
 					<div class="card-body">
 						<h5 class="card-title text-center">
@@ -168,8 +175,6 @@
 				</div>
 			</div>
 		</main>
-		
-		
 		<footer class="container mt-3">
 			<h3 id="contact">Contact</h3>
 			<p>
