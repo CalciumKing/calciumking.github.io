@@ -1,3 +1,7 @@
+:root {
+    --title-chars: 35;
+}
+
 body {
     position: absolute;
     top: 50%;
@@ -8,6 +12,22 @@ body {
 
 h1 {
     font-size: 4em;
+    overflow: hidden;
+    border-right: .15em solid white;
+    white-space: nowrap;
+    margin: 0 auto;
+    width: calc(var(--title-chars) * 1ch);
+    animation: typing 3.5s steps(var(--title-chars), end), blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: calc(var(--title-chars) * 1ch); }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: white; }
 }
 
 ul {
