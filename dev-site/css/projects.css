@@ -1,0 +1,25 @@
+main {
+    width: 80vw;
+    margin: 0 10vw;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: 5vw;
+    row-gap: 5vh;
+}
+
+#grid > div {
+
+}
+
+#grid > div > img {
+    aspect-ratio: 1 / 1;
+    height: 25vh;
+    border-radius: 15px;
+}
+
+#grid > div > p {
+    text-align: justify;
+}

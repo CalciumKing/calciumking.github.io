@@ -1,0 +1,96 @@
+body {
+    background-color: #1b1b1c;
+    color: white;
+    font-family: 'Space Mono', monospace;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+header {
+    width: 90vw;
+    margin: 0 auto;
+    padding: 5vh 5vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    letter-spacing: .1em;
+}
+
+header > h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+header > ul {
+    list-style-type: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+header > ul > li {
+    margin: 0 1vw;
+    font-size: 1.5em;
+}
+
+.active {
+    font-weight: bold;
+}
+
+main {
+    width: 50vw;
+    margin: 0 25vw;
+}
+
+main h1 {
+    font-size: 3.5em;
+}
+
+main h2 {
+    font-size: 2.5em;
+}
+
+main h3, main ul {
+    font-size: 2em;
+}
+
+p {
+    font-size: 1.5em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+main li::before {
+    content: "- ";
+}
+
+h1, h2, h3, h4, h5 {
+    font-weight: normal;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+    transition: all .3s ease;
+}
+
+main a::after {
+    content: "↗";
+    display: inline-block;
+    transition: all .3s ease;
+    transform: translate(.1em, -.3em);
+}
+
+a:hover {
+    color: grey;
+    text-decoration: underline;
+}
+
+a:hover::after {
+    transform: translate(.3em, -.5em);
+}
