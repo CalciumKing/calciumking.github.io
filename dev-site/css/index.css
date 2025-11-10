@@ -1,8 +1,5 @@
-:root {
-    --title-chars: 35;
-}
-
 body {
+    --title-chars: 35;
     position: absolute;
     top: 50%;
     left: 50%;

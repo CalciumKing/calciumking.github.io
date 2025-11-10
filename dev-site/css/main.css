@@ -45,8 +45,8 @@ header > ul > li {
 }
 
 main {
-    width: 50vw;
-    margin: 0 25vw;
+    width: 60vw;
+    margin: 0 20vw;
 }
 
 main h1 {
@@ -97,4 +97,8 @@ a:hover {
 
 a:hover::after {
     transform: translate(.3em, -.5em);
+}
+
+p {
+    text-align: justify;
 }

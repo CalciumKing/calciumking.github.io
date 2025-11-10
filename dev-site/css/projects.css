@@ -19,7 +19,3 @@ main {
     height: 25vh;
     border-radius: 15px;
 }
-
-#grid > div > p {
-    text-align: justify;
-}
