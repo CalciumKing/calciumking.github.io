@@ -1,0 +1,42 @@
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
+button {
+    font-size: 1.2em;
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-weight: bold;
+    height: auto;
+    width: auto;
+    padding: 1%;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 white;
+    background-color: #1b1b1c;
+    border-radius: 10px;
+}
+
+button > i {
+    width: 3em;
+    color: white;
+}
+
+button, button > i {
+    transition: all .3s;
+}
+
+button:hover {
+    background: #1b1b1c;
+    color: transparent;
+}
+
+button:hover > i {
+    transform: translateX(150%);
+}
+
+button:active {
+    transform: translate(.5vh, .5vh);
+    box-shadow: 1vh 1vh white;
+}
