@@ -1,10 +1,22 @@
-body {
+body > div {
     --title-chars: 35;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    width: 100%;
+    height: auto;
+}
+
+canvas {
+    position: fixed;
+    display: block;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
 }
 
 h1 {
