@@ -3,7 +3,7 @@ img {
     height: auto;
 }
 
-button {
+.button {
     font-size: 1.2em;
     color: white;
     font-family: 'Space Mono', monospace;
@@ -20,25 +20,29 @@ button {
     margin: 2% 0;
 }
 
-button > i {
+.button > i {
     width: 3em;
     color: white;
 }
 
-button, button > i {
+.button, .button > i {
     transition: all .3s;
 }
 
-button:hover {
+.button:hover {
     background: #1b1b1c;
     color: transparent;
 }
 
-button:hover > i {
-    transform: translateX(150%);
+.button:hover > i {
+    transform: translateX(200%);
 }
 
-button:active {
+.button:active {
     transform: translate(.5vh, .5vh);
     box-shadow: 1vh 1vh white;
+}
+
+.button::after {
+    display: none;
 }
