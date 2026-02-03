@@ -10,10 +10,6 @@ main {
     row-gap: 5vh;
 }
 
-#grid > div {
-
-}
-
 #grid > div > img {
     aspect-ratio: 1 / 1;
     height: 25vh;
