@@ -1,30 +1,31 @@
 const canvas = document.getElementById('network-bg');
 const ctx = canvas.getContext('2d');
 
-const nodes = [];
-const nodeCount = 70;
-const maxDistance = 200;
+const isMobile = window.innerWidth < 768;
+const nodeCount = isMobile ? 35 : 70;
+const maxDistance = isMobile ? 150 : 200;
 
-(function () {
-    resize();
-
-    for (let i = 0; i < nodeCount; i++) {
-        nodes.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 1.2,
-            vy: (Math.random() - 0.5) * 1.2
-        });
-    }
-
-    window.addEventListener('resize', resize);
-
-    animate();
-})();
+let nodes = [];
+let animationId;
 
 function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+}
+
+function initNodes() {
+    nodes = [];
+    for (let i = 0; i < nodeCount; i++) {
+        nodes.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * (isMobile ? 0.8 : 1.2),
+            vy: (Math.random() - 0.5) * (isMobile ? 0.8 : 1.2)
+        });
+    }
 }
 
 function animate() {
@@ -38,7 +39,7 @@ function animate() {
 
             if (distance < maxDistance) {
                 ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / maxDistance})`;
-                ctx.lineWidth = 1;
+                ctx.lineWidth = isMobile ? 0.8 : 1;
                 ctx.beginPath();
                 ctx.moveTo(nodes[i].x, nodes[i].y);
                 ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -58,9 +59,22 @@ function animate() {
 
         ctx.fillStyle = 'white';
         ctx.beginPath();
-        ctx.arc(node.x, node.y, 2.5, 0, Math.PI * 2);
+        ctx.arc(node.x, node.y, isMobile ? 2 : 2.5, 0, Math.PI * 2);
         ctx.fill();
     }
 
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
 }
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        resize();
+        initNodes();
+    }, 150);
+});
+
+resize();
+initNodes();
+animate();
