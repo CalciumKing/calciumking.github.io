@@ -25,7 +25,7 @@ header {
 
 header > h1 {
     margin: 0;
-    font-size: 2em;
+    font-size: clamp(1.2rem, 5vw, 2rem);
 }
 
 header > ul {
@@ -33,11 +33,12 @@ header > ul {
     display: flex;
     margin: 0;
     padding: 0;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 header > ul > li {
-    margin: 0 1vw;
-    font-size: 1.5em;
+    font-size: clamp(0.9rem, 4vw, 1.5rem);
 }
 
 .active {
@@ -45,24 +46,25 @@ header > ul > li {
 }
 
 main {
-    width: 60vw;
-    margin: 0 20vw;
+    width: min(90vw, 1200px);
+    margin: 0 auto;
+    padding: 1rem;
 }
 
 main h1 {
-    font-size: 3.5em;
+    font-size: clamp(1.8rem, 6vw, 3.5rem);
 }
 
 main h2 {
-    font-size: 2.5em;
+    font-size: clamp(1.3rem, 5vw, 2.5rem);
 }
 
 main h3, main ul {
-    font-size: 2em;
+    font-size: clamp(1rem, 4vw, 2rem);
 }
 
 p {
-    font-size: 1.5em;
+    font-size: clamp(0.9rem, 4vw, 1.5rem);
 }
 
 ul {
@@ -101,4 +103,109 @@ a:hover::after {
 
 p {
     text-align: justify;
+}
+
+/* ================ Media Queries ================ */
+
+/* Mobile */
+@media (max-width: 480px) {
+    main {
+        width: 92vw;
+    }
+}
+
+/* Fallback */
+@supports not (height: 100dvh) {
+    canvas {
+        height: 100vh;
+    }
+}
+
+/* Tablet Landscape */
+@media (max-width: 1024px) {
+    main {
+        width: 85vw;
+        margin: 0 auto;
+    }
+
+    header {
+        width: 95vw;
+        padding: 1.5rem 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    header > h1 {
+        font-size: 1.6em;
+        text-align: center;
+    }
+
+    header > ul {
+        gap: 0.75rem;
+    }
+
+    header > ul > li {
+        font-size: 1.2em;
+    }
+
+    main h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    main h2 {
+        font-size: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    p {
+        font-size: 1.2em;
+        line-height: 1.5;
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 768px) {
+    main {
+        width: 90vw;
+        padding: 0.5rem;
+    }
+
+    main h1 {
+        font-size: 1.8rem;
+        word-break: break-word;
+    }
+
+    main h2 {
+        font-size: 1.3rem;
+    }
+
+    main h3, main ul {
+        font-size: 1.1rem;
+    }
+
+    p {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    main, header {
+        overflow-x: hidden;
+    }
+
+    img, video, iframe {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+
+    main, header {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
 }

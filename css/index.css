@@ -16,7 +16,7 @@ canvas {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
 }
 
 h1 {
@@ -54,4 +54,111 @@ ul > li {
 ul > li > a {
   color: white;
   text-decoration: none;
+}
+
+/* ================ Media Queries ================ */
+
+/* Tablet */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5em;
+        white-space: normal;
+        border-right: none;
+        animation: none;
+        width: auto;
+    }
+
+    ul > li {
+        font-size: 1.5em;
+        margin: 0 4%;
+    }
+}
+
+/* Tablet Landscape (1024px and below) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    body > div {
+        width: 90%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    h1 {
+        font-size: 3em;
+        white-space: normal;
+        border-right: none;
+        animation: none;
+        width: auto;
+        word-break: break-word;
+    }
+
+    h2 {
+        font-size: 1.4em;
+        padding: 0 1rem;
+    }
+
+    ul > li {
+        font-size: 1.6em;
+        margin: 0 1.5%;
+    }
+}
+
+/* Tablet Portrait (768px) */
+@media (max-width: 768px) and (min-width: 481px) {
+    body > div {
+        width: 95%;
+        padding: 0 1rem;
+    }
+
+    h1 {
+        font-size: 2.2em;
+        line-height: 1.3;
+        margin-bottom: 0.5rem;
+    }
+
+    h2 {
+        font-size: 1.1em;
+        padding: 0 0.5rem;
+    }
+
+    ul {
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    ul > li {
+        font-size: 1.3em;
+        margin: 0;
+    }
+
+    ul > li > a {
+        display: inline-block;
+        padding: 0.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    body > div {
+        width: 95%;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+        margin-top: 1rem;
+    }
+
+    ul {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    ul > li {
+        font-size: 1.2em;
+        margin: 0;
+    }
 }
