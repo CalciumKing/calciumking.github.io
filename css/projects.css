@@ -12,6 +12,6 @@ main {
 
 #grid > div > img {
     aspect-ratio: 1 / 1;
-    height: 25vh;
+    width: 100%;
     border-radius: 15px;
 }
