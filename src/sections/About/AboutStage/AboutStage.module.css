@@ -1,0 +1,305 @@
+/* ---------- Pinned stage ---------- */
+.track {
+    position: relative;
+    height: 1200vh;
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.canvas {
+    position: absolute;
+    inset: 0;
+}
+
+.layer {
+    --dist: max(var(--p, 0) - var(--a, 0), var(--a, 0) - var(--p, 0));
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    padding-top: var(--nav-height);
+    pointer-events: none;
+    opacity: clamp(0, calc((0.17 - var(--dist)) / 0.07), 1);
+}
+
+/* Identity text also returns at the end of the track, so p = 1 looks exactly like p = 0 (the wrap is invisible). */
+.layerHero {
+    opacity: max(
+            clamp(0, calc((0.17 - var(--dist)) / 0.07), 1),
+            clamp(0, calc((var(--p, 0) - 0.95) / 0.05), 1)
+    );
+}
+
+.footerSlot {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 1;
+    opacity: clamp(0, min(calc((var(--p, 0) - 0.78) / 0.06), calc((0.96 - var(--p, 0)) / 0.04)), 1);
+}
+
+.layerEnd {
+    align-items: flex-end;
+    padding-bottom: 5rem;
+}
+
+.inner {
+    display: flex;
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+}
+
+.left {
+    justify-content: flex-start;
+}
+
+.right {
+    justify-content: flex-end;
+}
+
+.center {
+    justify-content: center;
+    text-align: center;
+}
+
+/* ---------- Text ---------- */
+.panel {
+    width: 100%;
+    max-width: 26rem;
+}
+
+.eyebrow {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.title {
+    margin-top: 0.75rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.heading {
+    margin-top: 0.75rem;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.body {
+    margin-top: 1rem;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+}
+
+.items {
+    margin-top: 1.25rem;
+    font-size: 0.8125rem;
+}
+
+.items li {
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--color-divider);
+    color: var(--color-text-muted);
+}
+
+.items li:last-child {
+    border-bottom: 1px solid var(--color-divider);
+}
+
+.groups {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+
+.groupItems {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.25rem;
+}
+
+.link {
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--color-divider);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--color-text-muted);
+    pointer-events: none;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.active .link {
+    pointer-events: auto;
+}
+
+.link:hover {
+    color: var(--color-text);
+    border-color: var(--color-line-strong);
+}
+
+.hint {
+    margin-top: 2rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    color: var(--color-text-muted);
+}
+
+.fallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--color-text-muted);
+}
+
+/* ---------- Reduced motion: stacked blocks ---------- */
+.block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    min-height: 80vh;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem var(--gutter);
+}
+
+.block:first-of-type {
+    padding-top: calc(var(--nav-height) + 3rem);
+}
+
+.block.right .panel {
+    order: 2;
+}
+
+.block.center {
+    text-align: left;
+}
+
+.block .links {
+    justify-content: flex-start;
+}
+
+.block .link {
+    pointer-events: auto;
+}
+
+.inlineWrap {
+    position: relative;
+}
+
+.inline {
+    height: min(60vh, 28rem);
+}
+
+.scroll {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    pointer-events: none;
+}
+
+.scrollLabel {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    color: var(--color-text-muted);
+}
+
+.scrollLine {
+    width: 3rem;
+    height: 1px;
+    background: var(--color-divider);
+}
+
+/* ---------- Mobile: text on top, machine on the bottom ---------- */
+@media (max-width: 800px) {
+    .layer,
+    .layerEnd {
+        align-items: flex-start;
+        padding-top: calc(var(--nav-height) + 0.75rem);
+        padding-bottom: 0;
+    }
+
+    .left,
+    .right,
+    .center {
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .panel {
+        max-width: none;
+    }
+
+    .title {
+        font-size: 1.75rem;
+    }
+
+    .heading {
+        font-size: 1.25rem;
+        margin-top: 0.5rem;
+    }
+
+    .body {
+        margin-top: 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    .items {
+        margin-top: 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .items li {
+        padding: 0.35rem 0;
+    }
+
+    .groups {
+        gap: 0.6rem;
+        margin-top: 0.75rem;
+    }
+
+    .groupItems {
+        font-size: 0.75rem;
+    }
+
+    .links {
+        justify-content: flex-start;
+        margin-top: 0.75rem;
+    }
+
+    .hint {
+        display: none;
+    }
+
+    .block {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .block.right .panel {
+        order: 0;
+    }
+}
