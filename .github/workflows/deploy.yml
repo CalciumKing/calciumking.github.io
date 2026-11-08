@@ -4,7 +4,7 @@ name: Deploy CalciumKing Portfolio
 on:
   push:
     branches:
-      - main
+      - master
   
   workflow_dispatch:
 
