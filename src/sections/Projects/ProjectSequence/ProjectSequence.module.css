@@ -1,0 +1,77 @@
+/* Track shares: [0, 0.75] projects (--s), [0.75, 1] return to the hero (--r). */
+.track {
+    --s: clamp(0, calc(var(--p, 0) / 0.75), 1);
+    --r: clamp(0, calc((var(--p, 0) - 0.75) / 0.25), 1);
+    position: relative;
+    /* Keeps 100vh of scroll per transition: range = (n - 1) / 0.75 × 100vh. */
+    height: calc((var(--n) - 1) / 0.75 * 100vh + 400vh);
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding-top: var(--nav-height);
+    overflow: hidden;
+}
+
+.stage {
+    position: relative;
+    isolation: isolate;
+    height: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    list-style: none;
+}
+
+/*
+ * d = this item's distance from the foreground, in projects (0 = active).
+ *   ahead: 0..1  waiting behind the active item
+ *   far:   0..1  fading out beyond the next item
+ *   past:  0..1  receding upward after being active
+ */
+.item {
+    --d: calc(var(--i) - var(--s) * (var(--n) - 1) - var(--r));
+    --ahead: clamp(0, var(--d), 1);
+    --far: clamp(0, calc((var(--d) - 1) * 2), 1);
+    --past: clamp(0, calc(var(--d) * -1), 1);
+
+    position: absolute;
+    inset: 0;
+    z-index: calc(var(--n) - var(--i)); /* earlier projects sit above later ones */
+    pointer-events: none;
+    transform-origin: 50% 40%;
+    opacity: calc(1 - 0.6 * var(--ahead) - 0.4 * var(--far) - var(--past));
+    transform: translateY(calc(var(--ahead) * 5vh - var(--past) * 14vh))
+    scale(calc(1 - 0.12 * var(--ahead) - 0.15 * var(--past)));
+    filter: blur(calc(var(--ahead) * 6px + var(--past) * 10px));
+    will-change: transform, opacity, filter;
+    list-style: none;
+}
+
+.item[data-far='true'] {
+    visibility: hidden;
+}
+
+/* Stacked layout: reduced motion or narrow screens. */
+.stacked {
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+.list {
+    list-style: none;
+}
+
+.returnLayer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: clamp(0, calc((var(--r) - 0.7) / 0.25), 1);
+}
+
+.footerSlot {
+    position: absolute;
+    inset: auto 0 0 0;
+    opacity: clamp(0, min(calc((var(--s) - 0.9) / 0.1), calc(1 - var(--r) / 0.2)), 1);
+}

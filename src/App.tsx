@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home';
+import Projects from './pages/Projects';
 
 export default function App() {
     const { pathname } = useLocation();
@@ -11,11 +12,11 @@ export default function App() {
             <main>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    {/* Routes for /about, /projects, /resume, /contact are added here later. */}
+                    <Route path="/projects" element={<Projects />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </main>
-            {pathname !== '/' && <Footer />}
+            {pathname !== '/' && pathname !== '/projects' && <Footer />}
         </>
     );
 }
