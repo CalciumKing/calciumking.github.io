@@ -1,0 +1,108 @@
+.hero {
+    position: relative;
+    min-height: 100svh;
+    padding-top: var(--nav-height);
+    display: flex;
+    align-items: center;
+}
+
+.inner {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 4rem);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.role {
+    font-size: 0.75rem;
+    letter-spacing: 0.24em;
+    color: var(--color-text-muted);
+}
+
+.name {
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+}
+
+.name span {
+    display: block;
+}
+
+.statement {
+    max-width: 32ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+}
+
+.visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: calc(100svh - var(--nav-height) - 6rem);
+    pointer-events: none;
+}
+
+.scroll {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    pointer-events: none;
+}
+
+.scrollLabel {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    color: var(--color-text-muted);
+}
+
+.scrollLine {
+    width: 3rem;
+    height: 1px;
+    background: var(--color-divider);
+}
+
+@media (max-width: 800px) {
+    .hero {
+        align-items: flex-start;
+    }
+
+    .inner {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+        gap: 2rem;
+        padding-top: 2.5rem;
+        padding-bottom: 4.5rem;
+    }
+
+    .content {
+        gap: 1.25rem;
+    }
+
+    .visual {
+        aspect-ratio: 4 / 3;
+        max-height: none;
+    }
+}
+
+@media (max-width: 800px) and (orientation: landscape) and (max-height: 520px) {
+    .scroll {
+        display: none;
+    }
+}

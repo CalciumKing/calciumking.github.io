@@ -1,0 +1,102 @@
+.track {
+    --p: 0;
+    --h: 1200svh; /* total track height: the one value to change to lengthen or shorten the page */
+    /* Track shares: [0, 0.55] earlier phases, [0.55, 0.75] directory, [0.75, 1] return to the Möbius. */
+    --o: min(calc(var(--p) / 0.55), 1); /* earlier phases, 0..1 */
+    --q: calc(var(--o) / 0.7);
+    --d: clamp(0, calc((var(--p) - 0.55) / 0.2), 1); /* directory phase, 0..1 */
+    --r: clamp(0, calc((var(--p) - 0.75) / 0.25), 1); /* return phase, 0..1 */
+    position: relative;
+    height: var(--h);
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+}
+
+.canvas {
+    position: absolute;
+    inset: var(--nav-height) 0 0 0;
+    pointer-events: none;
+    opacity: clamp(0, calc(1 - (var(--d) - 0.85) / 0.15 + var(--r) / 0.08), 1);
+}
+
+.inlineCanvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.heroLayer {
+    opacity: clamp(0, max(calc(1 - (var(--q) - 0.0228) / 0.076), calc((var(--r) - 0.7) / 0.25)), 1);
+    translate: 0 calc(
+            clamp(0, (var(--q) - 0.0228) / 0.076, 1) * (1 - clamp(0, (var(--r) - 0.7) / 0.25, 1)) * -2rem
+    );
+}
+
+.computationLayer {
+    opacity: clamp(0, min(calc((var(--q) - 0.2584) / 0.0836), calc(1 - (var(--q) - 0.46) / 0.07)), 1);
+    translate: 0 calc(
+            (1 - clamp(0, (var(--q) - 0.2584) / 0.0836, 1)) * 2rem - clamp(0, (var(--q) - 0.46) / 0.07, 1) * 2rem
+    );
+}
+
+.intelligenceLayer {
+    opacity: clamp(0, min(calc((var(--q) - 0.82) / 0.12), calc(1 - (var(--q) - 1) / 0.1)), 1);
+    translate: 0 calc(
+            (1 - clamp(0, (var(--q) - 0.82) / 0.12, 1)) * 2rem - clamp(0, (var(--q) - 1) / 0.1, 1) * 2rem
+    );
+}
+
+/* Geometry text arrives as the tesseract settles on the left, and leaves as it becomes the tree. */
+.geometryLayer {
+    opacity: clamp(0, min(calc((var(--o) - 0.9) / 0.08), calc(1 - var(--d) / 0.25)), 1);
+    translate: 0 calc(
+            (1 - clamp(0, (var(--o) - 0.9) / 0.08, 1)) * 2rem - clamp(0, var(--d) / 0.25, 1) * 2rem
+    );
+}
+
+.directoryLayer {
+    visibility: hidden;
+}
+
+.footerSlot {
+    position: absolute;
+    inset: auto 0 0 0;
+    opacity: clamp(0, min(calc((var(--d) - 0.55) / 0.3), calc(1 - var(--r) / 0.2)), 1);
+}
+
+/* Watched at the viewport's centre line: spans track progress 0.65 to 0.80 (past the end of the text fade-out). */
+.sentinel {
+    position: absolute;
+    left: 0;
+    width: 1px;
+    top: calc((var(--h) - 100svh) * 0.65 + 50svh);
+    height: calc((var(--h) - 100svh) * 0.15);
+    pointer-events: none;
+}
+
+.directoryActive {
+    visibility: visible;
+}
