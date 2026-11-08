@@ -9,10 +9,18 @@ const LINKS = [
 ];
 
 export default function Navigation() {
+    const { pathname } = useLocation();
+    const toTop = (to: string) => (e: React.MouseEvent) => {
+        if (pathname === to) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
     return (
         <header className={styles.header}>
             <nav className={styles.nav} aria-label="Primary">
-                <Link to="/index.html" className={styles.brand}>
+                <Link to="/" onClick={toTop('/')} className={styles.brand}>
                     ~/CalciumKing
                 </Link>
                 <ul className={styles.links}>
@@ -20,6 +28,7 @@ export default function Navigation() {
                         <li key={to} className={styles.item}>
                             <NavLink
                                 to={to}
+                                onClick={toTop(to)}
                                 className={({ isActive }) =>
                                     isActive ? `${styles.link} ${styles.active}` : styles.link
                                 }

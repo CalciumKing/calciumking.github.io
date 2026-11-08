@@ -1,8 +1,9 @@
 import type { CSSProperties, RefObject } from 'react';
 import styles from './SectionRail.module.css';
 
-// Track progress (0..1) at which each section is fully established.
-const SECTIONS = [
+type Section = { label: string; at: number };
+
+const HOME_SECTIONS: Section[] = [
     { label: 'Hero', at: 0 },
     { label: 'Computation', at: 0.153 },
     { label: 'Intelligence', at: 0.375 },
@@ -10,9 +11,15 @@ const SECTIONS = [
     { label: 'Directory', at: 0.72 },
 ];
 
-type Props = { trackRef: RefObject<HTMLElement> };
+type Props = {
+    trackRef: RefObject<HTMLElement>;
+    sections?: Section[];
+    loop?: boolean;
+    fixed?: boolean; // true: stays on the side of the viewport instead of the parent
+    leading?: string; // label for an extra first tick that scrolls to the top of the page
+};
 
-export default function SectionRail({ trackRef }: Props) {
+export default function SectionRail({ trackRef, sections = HOME_SECTIONS, loop = true, fixed = false, leading }: Props) {
     const goTo = (at: number) => {
         const track = trackRef.current;
         if (!track) return;
@@ -23,9 +30,24 @@ export default function SectionRail({ trackRef }: Props) {
     };
 
     return (
-        <nav className={styles.rail} aria-label="Page sections">
+        <nav
+            className={[styles.rail, !loop && styles.flat, fixed && styles.fixed].filter(Boolean).join(' ')}
+            aria-label="Page sections"
+        >
             <ul className={styles.list}>
-                {SECTIONS.map(({ label, at }) => (
+                {leading && (
+                    <li>
+                        <button
+                            type="button"
+                            className={`${styles.button} ${styles.leading}`}
+                            aria-label={leading}
+                            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        >
+                            <span className={styles.line} />
+                        </button>
+                    </li>
+                )}
+                {sections.map(({ label, at }) => (
                     <li key={label}>
                         <button
                             type="button"

@@ -6,6 +6,10 @@
     translate: 0 -50%;
 }
 
+.fixed {
+    position: fixed;
+}
+
 .list {
     display: flex;
     flex-direction: column;
@@ -25,7 +29,16 @@
             max(var(--p, 0) - var(--c, 0), var(--c, 0) - var(--p, 0)),
             max(var(--p, 0) - var(--c, 0) - 1, var(--c, 0) + 1 - var(--p, 0))
     );
-    --k: clamp(0, calc(1 - var(--dist) / 0.15), 1);
+    --k: clamp(0, calc((1 - var(--dist) / 0.15) * (1 - var(--hero, 0))), 1);
+}
+
+.leading {
+    --k: clamp(0, var(--hero, 0), 1);
+}
+
+/* Non-looping rails: no wrap-around distance. */
+.flat .button {
+    --dist: max(var(--p, 0) - var(--c, 0), var(--c, 0) - var(--p, 0));
 }
 
 .line {

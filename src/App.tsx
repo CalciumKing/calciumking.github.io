@@ -3,11 +3,15 @@ import Navigation from './components/Navigation/Navigation';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
+import ScrollToTop from './components/ScrollToTop/ScrollToTop';
+import Splash from './components/Splash/Splash';
 
 export default function App() {
     const { pathname } = useLocation();
     return (
         <>
+            <ScrollToTop />
+            <Splash />
             <Navigation />
             <main>
                 <Routes>
