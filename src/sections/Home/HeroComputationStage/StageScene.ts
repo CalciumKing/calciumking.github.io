@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import type { SceneHandle } from '../../hooks/useThreeScene';
+import type { SceneHandle } from '../../../hooks/useThreeScene';
 import {
     buildGeometry,
     COLOR_LONGITUDINAL,

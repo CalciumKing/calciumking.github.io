@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import DirectorySection from '../Directory/DirectorySection';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { useScrollProgress } from '../../hooks/useScrollProgress';
-import type { SceneHandle } from '../../hooks/useThreeScene';
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
+import { useScrollProgress } from '../../../hooks/useScrollProgress';
+import type { SceneHandle } from '../../../hooks/useThreeScene';
 import HeroSection from '../Hero/HeroSection';
 import ComputationSection from '../Computation/ComputationSection';
 import {createStageScene, STAGE_PROGRESS, StageLayout} from './StageScene';
 import styles from './HeroComputationStage.module.css';
 import IntelligenceSection from '../Intelligence/IntelligenceSection';
 import GeometrySection from '../Geometry/GeometrySection';
-import SectionRail from '../../components/SectionRail/SectionRail';
-import Footer from '../../components/Footer/Footer';
+import SectionRail from '../../../components/SectionRail/SectionRail';
+import Footer from '../../../components/Footer/Footer';
 
 type Progress = { current: number };
 const HERO: Progress = { current: STAGE_PROGRESS.hero };

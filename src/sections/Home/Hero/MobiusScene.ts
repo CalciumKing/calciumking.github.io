@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import type { SceneHandle, SceneOptions } from '../../hooks/useThreeScene';
+import type { SceneHandle, SceneOptions } from '../../../hooks/useThreeScene';
 
 // Strip geometry
 const RADIUS = 2.2; // R: center-circle radius
