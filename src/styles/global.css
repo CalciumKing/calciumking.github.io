@@ -43,7 +43,6 @@ a {
     outline-offset: 4px;
 }
 
-/* Home page only (class is toggled by useInfiniteScroll): hide the scrollbar and disable overscroll bounce. */
 html.infinite-scroll {
     scrollbar-width: none;
     overscroll-behavior-y: none;

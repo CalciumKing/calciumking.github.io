@@ -1,11 +1,11 @@
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
-import { useThreeScene } from '../../../hooks/useThreeScene';
 import { createProjectsHeroScene } from './heroScene';
 import styles from './ProjectsHero.module.css';
+import ThreeCanvas from "../../../components/ThreeCanvas/ThreeCanvas";
+import ScrollHint from "../../../components/ScrollHint/ScrollHint";
 
 export default function ProjectsHero() {
     const reducedMotion = useReducedMotion();
-    const { containerRef, failed } = useThreeScene(createProjectsHeroScene, reducedMotion);
 
     return (
         <section className={styles.hero}>
@@ -17,13 +17,9 @@ export default function ProjectsHero() {
                 </p>
             </div>
             <div className={styles.visual} aria-hidden="true">
-                <div ref={containerRef} className={styles.canvas} />
-                {failed && <p className={styles.fallback}>3D visualization unavailable</p>}
+                <ThreeCanvas factory={createProjectsHeroScene} reducedMotion={reducedMotion} className={styles.canvas} />
             </div>
-            <div className={styles.scroll} aria-hidden="true">
-                <span className={styles.scrollLabel}>SCROLL</span>
-                <span className={styles.scrollLine} />
-            </div>
+            <ScrollHint/>
         </section>
     );
 }

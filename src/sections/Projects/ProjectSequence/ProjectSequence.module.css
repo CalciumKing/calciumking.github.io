@@ -1,16 +1,14 @@
-/* Track shares: [0, 0.75] projects (--s), [0.75, 1] return to the hero (--r). */
 .track {
-    --s: clamp(0, calc(var(--p, 0) / 0.75), 1);
-    --r: clamp(0, calc((var(--p, 0) - 0.75) / 0.25), 1);
+    --s: clamp(0, calc(var(--p, 0) / var(--share)), 1);
+    --r: clamp(0, calc((var(--p, 0) - var(--share)) / (1 - var(--share))), 1);
     position: relative;
-    /* Keeps 100vh of scroll per transition: range = (n - 1) / 0.75 × 100vh. */
-    height: calc((var(--n) - 1) / 0.75 * 100vh + 400vh);
+    height: calc((var(--n) - 1) / var(--share) * 100svh + 400svh);
 }
 
 .sticky {
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100svh;
     padding-top: var(--nav-height);
     overflow: hidden;
 }
@@ -68,6 +66,10 @@
     inset: 0;
     pointer-events: none;
     opacity: clamp(0, calc((var(--r) - 0.7) / 0.25), 1);
+}
+
+.returnLayer[hidden] {
+    display: none;
 }
 
 .footerSlot {

@@ -1,12 +1,12 @@
 import ProjectsHero from '../sections/Projects/Hero/ProjectsHero';
 import ProjectSequence from '../sections/Projects/ProjectSequence/ProjectSequence';
-import { useReducedMotion } from '../hooks/useReducedMotion';
-import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
-import {useDocumentTitle} from "../hooks/useDocumentTitle";
+import {MOBILE_QUERY} from "../lib/layout";
+import {useMediaQuery} from "../hooks/useMediaQuery";
+import {usePage} from "../hooks/usePage";
 
 export default function Projects() {
-    useInfiniteScroll(!useReducedMotion());
-    useDocumentTitle("Projects | Calcium King")
+    const narrow = useMediaQuery(MOBILE_QUERY); // stacked layout has no matching end state
+    usePage('Projects', !narrow);
     return (
         <>
             <ProjectsHero />

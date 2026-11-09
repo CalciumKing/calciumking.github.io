@@ -1,3 +1,5 @@
+import {lerp3} from "../../../lib/math";
+
 export type Vec3 = [number, number, number];
 export type CpuSegment = { a: Vec3; b: Vec3; bright: boolean };
 
@@ -77,12 +79,6 @@ export function buildCpuSegments(): CpuSegment[] {
 
 const length = (s: CpuSegment) =>
     Math.hypot(s.b[0] - s.a[0], s.b[1] - s.a[1], s.b[2] - s.a[2]);
-
-const lerp3 = (a: Vec3, b: Vec3, t: number): Vec3 => [
-    a[0] + (b[0] - a[0]) * t,
-    a[1] + (b[1] - a[1]) * t,
-    a[2] + (b[2] - a[2]) * t,
-];
 
 /** Subdivides segments (proportional to length) so the result has exactly `count` segments. */
 export function resampleSegments<T extends CpuSegment>(src: T[], count: number): T[] {

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import styles from './HeroSection.module.css';
+import ScrollHint from "../../../components/ScrollHint/ScrollHint";
 
 type SectionProps = {
     className?: string;
@@ -27,11 +28,7 @@ export default function HeroSection({ className, visual }: SectionProps) {
                     {visual}
                 </div>
             </div>
-
-            <div className={styles.scroll} aria-hidden="true">
-                <span className={styles.scrollLabel}>SCROLL</span>
-                <span className={styles.scrollLine} />
-            </div>
+            <ScrollHint />
         </section>
     );
 }

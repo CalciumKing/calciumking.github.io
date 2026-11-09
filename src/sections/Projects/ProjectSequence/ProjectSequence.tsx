@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { PROJECTS } from '../../../data/projects';
+import { PROJECTS } from "../projectsContent";
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
@@ -8,6 +8,7 @@ import styles from './ProjectSequence.module.css';
 import SectionRail from '../../../components/SectionRail/SectionRail';
 import Footer from '../../../components/Footer/Footer';
 import ProjectsHero from '../Hero/ProjectsHero';
+import {MOBILE_QUERY} from "../../../lib/layout";
 
 const COUNT = PROJECTS.length;
 const PROJECTS_SHARE = 0.75; // share of the track used by the projects; the rest is the return phase
@@ -15,11 +16,12 @@ const RAIL_SECTIONS = PROJECTS.map((p, i) => ({ label: p.name, at: (i / (COUNT -
 
 export default function ProjectSequence() {
     const reducedMotion = useReducedMotion();
-    const narrow = useMediaQuery('(max-width: 800px)');
+    const narrow = useMediaQuery(MOBILE_QUERY)
     const stacked = reducedMotion || narrow;
     const trackRef = useRef<HTMLElement>(null);
     const progress = useScrollProgress(trackRef, !stacked);
     const [active, setActive] = useState(0);
+    const [returning, setReturning] = useState(false);
 
     // Active index only gates focusability and scene mounting; the visuals are pure CSS on --p.
     useEffect(() => {
@@ -28,6 +30,7 @@ export default function ProjectSequence() {
             const s = Math.min(1, progress.current / PROJECTS_SHARE);
             const next = Math.round(s * (COUNT - 1));
             setActive((prev) => (prev === next ? prev : next));
+            setReturning(progress.current > 0.8);
 
             const track = trackRef.current;
             if (track) {
@@ -68,7 +71,7 @@ export default function ProjectSequence() {
         <section
             ref={trackRef}
             className={styles.track}
-            style={{ '--n': COUNT } as CSSProperties}
+            style={{ '--n': COUNT, '--share': PROJECTS_SHARE } as CSSProperties}
             aria-label="Selected projects"
         >
             <div className={styles.sticky}>
@@ -90,7 +93,7 @@ export default function ProjectSequence() {
                         </li>
                     ))}
                 </ol>
-                <div className={styles.returnLayer} aria-hidden="true">
+                <div className={styles.returnLayer} aria-hidden="true" hidden={!returning}>
                     <ProjectsHero />
                 </div>
                 <div className={styles.footerSlot}>

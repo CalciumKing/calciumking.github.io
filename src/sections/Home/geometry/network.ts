@@ -1,4 +1,4 @@
-import type { CpuSegment, Vec3 } from '../Computation/CpuGeometry';
+import type { CpuSegment, Vec3 } from './cpu';
 
 export type NetSegment = CpuSegment & { mask: number }; // mask: bit k = belongs to signal path set k
 

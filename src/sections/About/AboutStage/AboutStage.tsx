@@ -1,13 +1,17 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useRef, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import SectionRail from '../../../components/SectionRail/SectionRail';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
-import type { SceneHandle } from '../../../hooks/useThreeScene';
+import type {SceneFactory} from '../../../hooks/useThreeScene';
 import { PHASES, type Phase } from '../aboutContent';
 import { createMachineScene } from '../machine/createMachine';
 import styles from './AboutStage.module.css';
 import Footer from '../../../components/Footer/Footer';
+import ThreeCanvas from "../../../components/ThreeCanvas/ThreeCanvas";
+import ScrollHint from "../../../components/ScrollHint/ScrollHint";
+import { useProgressRange } from "../../../hooks/useProgressRange";
+import PinnedTrack from "../../../components/PinnedTrack/PinnedTrack";
 
 type Progress = { current: number };
 const RAIL = PHASES.map(({ label, at }) => ({ label, at }));
@@ -20,37 +24,21 @@ type CanvasProps = {
 };
 
 function MachineCanvas({ progress, reducedMotion, className }: CanvasProps) {
-    const ref = useRef<HTMLDivElement>(null);
-    const [failed, setFailed] = useState(false);
-
-    useEffect(() => {
-        const container = ref.current;
-        if (!container) return;
-        let handle: SceneHandle | null = null;
-        try {
-            handle = createMachineScene(container, { reducedMotion, progress });
-            setFailed(false);
-        } catch (error) {
-            console.warn('Three.js scene failed to initialize:', error);
-            setFailed(true);
-        }
-        return () => handle?.dispose();
-    }, [progress, reducedMotion]);
-
-    return (
-        <>
-            <div ref={ref} className={className} />
-            {failed && <p className={styles.fallback}>3D visualization unavailable</p>}
-        </>
+    const factory = useCallback<SceneFactory>(
+        (container, options) => createMachineScene(container, { ...options, progress }),
+        [progress],
     );
+    return <ThreeCanvas factory={factory} reducedMotion={reducedMotion} className={className} />;
 }
 
 function PhaseBody({ phase, interactive }: { phase: Phase; interactive: boolean }) {
-    const Heading = phase.id === 'identity' ? 'h1' : 'h2';
+    const isHero = phase.id === 'identity';
+    const Heading = isHero ? 'h1' : 'h2';
+
     return (
         <div className={styles.panel}>
-            <p className={styles.eyebrow}>{phase.id === 'identity' ? '' : '//'} {phase.eyebrow}</p>
-            <Heading className={phase.id === 'identity' ? styles.title : styles.heading}>{phase.heading}</Heading>
+            <p className={styles.eyebrow}>{phase.eyebrow}</p>
+            <Heading className={isHero ? styles.title : styles.heading}>{phase.heading}</Heading>
             {phase.body && <p className={styles.body}>{phase.body}</p>}
             {phase.items && (
                 <ul className={styles.items}>
@@ -86,16 +74,7 @@ export default function AboutStage() {
     const reducedMotion = useReducedMotion();
     const trackRef = useRef<HTMLDivElement>(null);
     const progress = useScrollProgress(trackRef, !reducedMotion);
-    const [end, setEnd] = useState(false);
-
-    // Conclusion links only become clickable/focusable once that phase is established.
-    useEffect(() => {
-        if (reducedMotion) return;
-        const update = () => setEnd(progress.current > 0.8 && progress.current < 0.96);
-        update();
-        window.addEventListener('scroll', update, { passive: true });
-        return () => window.removeEventListener('scroll', update);
-    }, [progress, reducedMotion]);
+    const end = useProgressRange(progress, 0.8, 0.96, !reducedMotion);
 
     if (reducedMotion) {
         return (
@@ -114,8 +93,7 @@ export default function AboutStage() {
     }
 
     return (
-        <div ref={trackRef} className={styles.track}>
-            <div className={styles.sticky}>
+        <PinnedTrack trackRef={trackRef} height="1200svh">
                 <MachineCanvas progress={progress} reducedMotion={false} className={styles.canvas} />
                 {PHASES.map((phase) => {
                     const cls = [
@@ -131,18 +109,14 @@ export default function AboutStage() {
                             <div className={`${styles.inner} ${styles[phase.side]}`}>
                                 <PhaseBody phase={phase} interactive={phase.id !== 'conclusion' || end} />
                             </div>
+                            {phase.id === 'identity' && <ScrollHint />}
                         </div>
                     );
                 })}
                 <div className={styles.footerSlot}>
                     <Footer />
                 </div>
-                <div className={styles.scroll} aria-hidden="true">
-                    <span className={styles.scrollLabel}>SCROLL</span>
-                    <span className={styles.scrollLine} />
-                </div>
                 <SectionRail trackRef={trackRef} sections={RAIL} loop={false} />
-            </div>
-        </div>
+        </PinnedTrack>
     );
 }

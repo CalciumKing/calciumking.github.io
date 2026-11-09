@@ -1,0 +1,10 @@
+.track {
+    position: relative;
+}
+
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+}

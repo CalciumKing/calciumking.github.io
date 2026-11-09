@@ -1,5 +1,4 @@
 :root {
-    /* Color */
     --color-background: #050505;
     --color-surface: #0b0b0b;
     --color-line: #777777;
@@ -8,10 +7,8 @@
     --color-text-muted: #8a8a8a;
     --color-divider: #303030;
 
-    /* Typography */
     --font-family: 'Space Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
-    /* Layout */
     --gutter: clamp(1.25rem, 4vw, 3rem);
     --max-width: 80rem;
     --nav-height: 4rem;

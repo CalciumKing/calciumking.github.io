@@ -1,3 +1,5 @@
+import {lerp, smooth} from "../../../lib/math";
+
 /** One full machine + camera state. Everything the scene needs is sampled from this at a scroll progress. */
 export type Pose = {
     panel: number; // 0..1 shell panels fly out radially
@@ -55,7 +57,6 @@ const STOPS: { at: number; pose: Pose }[] = [
 ];
 
 const KEYS = Object.keys(BASE) as (keyof Pose)[];
-const smooth = (t: number) => t * t * (3 - 2 * t);
 
 export function samplePose(p: number): Pose {
     if (p <= STOPS[0].at) return STOPS[0].pose;
@@ -65,7 +66,7 @@ export function samplePose(p: number): Pose {
             const b = STOPS[i];
             const t = smooth((p - a.at) / (b.at - a.at));
             const out = { ...a.pose };
-            for (const k of KEYS) out[k] = a.pose[k] + (b.pose[k] - a.pose[k]) * t;
+            for (const k of KEYS) out[k] = lerp(a.pose[k], b.pose[k], t);
             return out;
         }
     }

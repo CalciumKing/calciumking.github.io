@@ -1,10 +1,7 @@
-import HeroComputationStage from '../sections/Home/HeroComputationStage/HeroComputationStage';
-import { useReducedMotion } from '../hooks/useReducedMotion';
-import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
-import {useDocumentTitle} from "../hooks/useDocumentTitle";
+import HomeStage from '../sections/Home/Stage/HomeStage';
+import {usePage} from "../hooks/usePage";
 
 export default function Home() {
-    useInfiniteScroll(!useReducedMotion());
-    useDocumentTitle("Home | Calcium King")
-    return <HeroComputationStage />;
+    usePage('Home')
+    return <HomeStage />;
 }

@@ -1,4 +1,4 @@
-import type { SceneFactory } from '../hooks/useThreeScene';
+import type { SceneFactory } from '../../hooks/useThreeScene';
 
 export type Project = {
     id: string;
@@ -9,11 +9,9 @@ export type Project = {
     technologies: string[];
     githubUrl?: string;
     liveUrl?: string;
-    /** Wireframe visual. Omit until the project's scene exists; the frame renders empty. */
     scene?: SceneFactory;
 };
 
-// To add a visual: create a SceneFactory (see MobiusScene.ts) and set `scene` on the project.
 export const PROJECTS: Project[] = [
     {
         id: 'nexar-solutions',

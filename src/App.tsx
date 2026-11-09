@@ -1,6 +1,5 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
-import Footer from './components/Footer/Footer';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import About from './pages/About';
@@ -8,7 +7,6 @@ import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import Splash from './components/Splash/Splash';
 
 export default function App() {
-    const { pathname } = useLocation();
     return (
         <>
             <ScrollToTop />
@@ -22,7 +20,6 @@ export default function App() {
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </main>
-            {pathname !== '/' && pathname !== '/projects' && pathname !== '/about' && <Footer />}
         </>
     );
 }

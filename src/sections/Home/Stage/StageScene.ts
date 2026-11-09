@@ -4,18 +4,27 @@ import {
     buildGeometry,
     COLOR_LONGITUDINAL,
     COLOR_TRANSVERSE,
-    COLOR_VERTEX,
     STATIC_TIME,
-} from '../Hero/MobiusScene';
-import { buildCpuSegments, resampleSegments } from '../Computation/CpuGeometry';
-import { buildNetworkSegments, LAYER_COUNT, LAYER_GAP, LAYER_X0, SIGNAL_SET_COUNT } from '../Intelligence/NetworkGeometry';
-import type { NetSegment } from '../Intelligence/NetworkGeometry';
+} from '../geometry/mobius';
+import { buildCpuSegments, resampleSegments } from '../geometry/cpu';
+import { buildNetworkSegments, LAYER_COUNT, LAYER_GAP, LAYER_X0, SIGNAL_SET_COUNT } from '../geometry/network';
+import type { NetSegment } from '../geometry/network';
 import {
     projectTesseract,
     tesseractAngles,
     tesseractEdgeOrder,
     TESSERACT_EDGES,
-} from '../Geometry/TesseractGeometry';
+} from '../geometry/tesseract';
+import {clamp01, lerp, smooth, TAU} from "../../../lib/math";
+import {
+    DIR_MORPH, MOVE_SPAN, MOVE_START, SPLIT,
+    dirOf, geoOf, morphOf, netOf, oldOf, phaseA, retOf,
+} from './phases';
+import {layoutTree} from "./measureTree";
+import {MOBILE_QUERY} from "../../../lib/layout";
+import {createRenderer} from "../../../lib/three/createRenderer";
+
+export { OLD_SHARE, STAGE_PROGRESS } from './phases';
 
 export type StageLayout = 'stage' | 'inline';
 export type StageOptions = {
@@ -24,55 +33,21 @@ export type StageOptions = {
     progress: { current: number };
     tree?: { current: HTMLElement | null }; // directory tree; its [data-tree-line] elements are the morph targets
 };
-type TreeLine = { a: [number, number]; b: [number, number]; len: number };
+type Frame = {
+    m: number; n: number; g: number; d: number; r: number;
+    offX: number; offY: number;
+    scan: number; scanX: number;
+    pulse: number; pulseSet: number; pulsePos: number;
+};
 
-const TAU = Math.PI * 2;
 const CAMERA_Z = 13;
 const GROUP_SCALE = 0.95;
 const CPU_POSE = { x: -0.95, y: 0, z: Math.PI / 4 };
-const MORPH_START = 0.12; // scroll progress where the morph begins
-const MORPH_SPAN = 0.58; // ...and how much progress it spans
-const MOVE_START = 0.1;
-const MOVE_SPAN = 0.6;
 const DELAY_RADIUS = 3.8;
 
-const SCROLL_A = 0.38; // share of the track used by the Hero→CPU phase (same scroll length as before)
 const NET_POSE = { x: 0.18, y: -0.6, z: 0 };
-const NET_START = 0.5; // CPU→network morph and travel
-const NET_SPAN = 0.34;
 const PULSE_PERIOD = 7; // seconds per signal cycle
 const PULSE_SWEEP = 4.5; // seconds of that cycle spent sweeping; the rest is rest
-
-const SPLIT = 0.7; // share of the track used by Hero→CPU→network (their scroll length is unchanged)
-const GEO_START = 0.74; // network→tesseract morph start (track progress)
-const GEO_SPAN = 0.2;
-
-// Whole-track progress: [0, OLD_SHARE] earlier phases, [OLD_SHARE, DIR_END] directory, [DIR_END, 1] return to the Möbius.
-// Keep in sync with the 0.55 / 0.75 constants in HeroComputationStage.module.css.
-export const OLD_SHARE = 0.55;
-const DIR_END = 0.75;
-const DIR_MORPH = 0.85; // share of the directory phase used by tesseract→tree; the DOM tree takes over after
-
-export const STAGE_PROGRESS = {
-    hero: 0,
-    computation: 0.322 * OLD_SHARE,
-    intelligence: 0.7 * OLD_SHARE,
-    geometry: OLD_SHARE,
-} as const;
-
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-const smooth = (v: number) => {
-    const t = clamp01(v);
-    return t * t * (3 - 2 * t);
-};
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const phaseA = (p: number) => clamp01(p / SCROLL_A);
-const morphOf = (p: number) => clamp01((phaseA(p) - MORPH_START) / MORPH_SPAN);
-const netOf = (p: number) => clamp01((p - NET_START) / NET_SPAN);
-const geoOf = (p: number) => clamp01((p - GEO_START) / GEO_SPAN);
-const oldOf = (all: number) => clamp01(all / OLD_SHARE); // earlier phases, 0..1
-const dirOf = (all: number) => clamp01((all - OLD_SHARE) / (DIR_END - OLD_SHARE)); // directory phase, 0..1
-const retOf = (all: number) => clamp01((all - DIR_END) / (1 - DIR_END)); // return phase, 0..1
 
 /**
  * One line buffer morphing between the Möbius strip (progress 0) and the CPU (progress 1).
@@ -82,23 +57,14 @@ export function createStageScene(
     container: HTMLElement,
     { reducedMotion, layout, progress, tree }: StageOptions,
 ): SceneHandle {
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    const canvas = renderer.domElement;
-    canvas.style.display = 'block';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    container.appendChild(canvas);
+    const { renderer, dispose: disposeRenderer } = createRenderer(container);
 
     // ---- Source (Möbius) data ----
     const mobius = buildGeometry();
     const lp = new Float32Array(mobius.longitudinal.getAttribute('position').array);
     const tp = new Float32Array(mobius.transverse.getAttribute('position').array);
-    const vp = new Float32Array(mobius.vertices.getAttribute('position').array);
     mobius.longitudinal.dispose();
     mobius.transverse.dispose();
-    mobius.vertices.dispose();
 
     const segCount = (lp.length + tp.length) / 6;
     const lpSegs = lp.length / 6;
@@ -131,17 +97,6 @@ export function createStageScene(
         delay[i] = clamp01(Math.hypot(mx, my) / DELAY_RADIUS); // center resolves first
     });
 
-    // Vertex points land on real CPU vertices (corners, pin tips).
-    const pointCount = vp.length / 3;
-    const endpoints = base.flatMap((s) => [s.a, s.b]);
-    const pTo = new Float32Array(pointCount * 3);
-    const pDelay = new Float32Array(pointCount);
-    for (let j = 0; j < pointCount; j++) {
-        const q = endpoints[j % endpoints.length];
-        pTo.set(q, j * 3);
-        pDelay[j] = clamp01(Math.hypot(q[0], q[1]) / DELAY_RADIUS);
-    }
-
     // ---- Target 2 (network) data ----
     // CPU body/die segments become node cages, lead segments become edges.
     // Both sides are paired in left-to-right order so the reorganization stays coherent.
@@ -154,7 +109,7 @@ export function createStageScene(
     const toNet = new Float32Array(segCount * 6);
     const colorNet = new Float32Array(segCount * 6);
     const delay2 = new Float32Array(segCount);
-    const netPos = new Float32Array(segCount); // position along the layers (0..LAYER_COUNT-1)
+    const netPos = new Float32Array(segCount); // position along the layers (0-LAYER_COUNT-1)
     const netMask = new Uint8Array(segCount); // signal path-set membership
 
     const pair = (idx: number[], segs: NetSegment[]) => {
@@ -243,18 +198,10 @@ export function createStageScene(
     lineGeo.setAttribute('position', posAttr);
     lineGeo.setAttribute('color', colAttr);
 
-    const ptsPos = new Float32Array(vp);
-    const ptsAttr = new THREE.BufferAttribute(ptsPos, 3).setUsage(THREE.DynamicDrawUsage);
-    const ptsGeo = new THREE.BufferGeometry();
-    ptsGeo.setAttribute('position', ptsAttr);
-
     const lineMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9 });
-    const ptsMat = new THREE.PointsMaterial({ color: COLOR_VERTEX, size: 2.5, sizeAttenuation: false });
 
     const lines = new THREE.LineSegments(lineGeo, lineMat);
-    // const points = new THREE.Points(ptsGeo, ptsMat);
     lines.frustumCulled = false;
-    // points.frustumCulled = false;
 
     const group = new THREE.Group();
     group.scale.setScalar(GROUP_SCALE);
@@ -265,20 +212,7 @@ export function createStageScene(
     const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 
     // ---- Per-frame update ----
-    const updateBuffers = (
-        m: number,
-        n: number,
-        g: number,
-        d: number, // directory morph, 0..1
-        r: number, // return phase, 0..1
-        offX: number, // group position in local units, so tree targets stay fixed in the world
-        offY: number,
-        scan: number,
-        scanX: number,
-        pulse: number,
-        pulseSet: number,
-        pulsePos: number,
-    ) => {
+    const updateBuffers = ({ m, n, g, d, r, offX, offY, scan, scanX, pulse, pulseSet, pulsePos }: Frame) => {
         if (r > 0 && treeReady) {
             invWorld.copy(group.matrixWorld).invert();
             for (let i = 0; i < segCount; i++) {
@@ -337,14 +271,9 @@ export function createStageScene(
                 lineCol[o + k] = Math.min(1, c * (1 + boost));
             }
         }
-        for (let j = 0; j < pointCount; j++) {
-            const t = smooth((m - pDelay[j] * 0.45) / 0.55);
-            const o = j * 3;
-            for (let k = 0; k < 3; k++) ptsPos[o + k] = vp[o + k] + (pTo[o + k] - vp[o + k]) * t;
-        }
+
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
-        ptsAttr.needsUpdate = true;
     };
 
     const state = {
@@ -362,50 +291,7 @@ export function createStageScene(
 
     /** Converts the DOM tree's lines to group-local coordinates and deals the segments along them. */
     const measureTree = () => {
-        treeReady = false;
-        const root = tree?.current;
-        const box = container.getBoundingClientRect();
-        if (!root || box.width < 1 || box.height < 1) return;
-
-        const toWorld = (x: number, y: number): [number, number] => [
-            (((x - box.left) / box.width - 0.5) * state.visW) / GROUP_SCALE,
-            ((0.5 - (y - box.top) / box.height) * state.visH) / GROUP_SCALE,
-        ];
-        const treeLines: TreeLine[] = [];
-        root.querySelectorAll<HTMLElement>('[data-tree-line]').forEach((el) => {
-            const r = el.getBoundingClientRect();
-            const vertical = el.dataset.treeLine === 'v';
-            const cx = r.left + r.width / 2;
-            const cy = r.top + r.height / 2;
-            const a = toWorld(vertical ? cx : r.left, vertical ? r.top : cy);
-            const b = toWorld(vertical ? cx : r.right, vertical ? r.bottom : cy);
-            treeLines.push({ a, b, len: Math.hypot(b[0] - a[0], b[1] - a[1]) });
-        });
-        const total = treeLines.reduce((sum, l) => sum + l.len, 0);
-        if (total <= 0) return;
-
-        treeOrder.forEach((i, r) => {
-            const u0 = (r / segCount) * total;
-            const u1 = ((r + 1) / segCount) * total;
-            const um = (u0 + u1) / 2;
-            let start = 0;
-            let k = 0;
-            while (k < treeLines.length - 1 && um >= start + treeLines[k].len) {
-                start += treeLines[k].len;
-                k++;
-            }
-            const l = treeLines[k];
-            const s0 = l.len > 0 ? clamp01((u0 - start) / l.len) : 0;
-            const s1 = l.len > 0 ? clamp01((u1 - start) / l.len) : 0;
-            const o = i * 6;
-            toTree[o] = l.a[0] + (l.b[0] - l.a[0]) * s0;
-            toTree[o + 1] = l.a[1] + (l.b[1] - l.a[1]) * s0;
-            toTree[o + 2] = 0;
-            toTree[o + 3] = l.a[0] + (l.b[0] - l.a[0]) * s1;
-            toTree[o + 4] = l.a[1] + (l.b[1] - l.a[1]) * s1;
-            toTree[o + 5] = 0;
-        });
-        treeReady = true;
+        treeReady = layoutTree(container, tree?.current, state.visW, state.visH, GROUP_SCALE, treeOrder, toTree);
     };
 
     const draw = () => {
@@ -431,7 +317,7 @@ export function createStageScene(
         const pulsePos = -0.6 + ((((cycle % 1) * PULSE_PERIOD) / PULSE_SWEEP) * LAYER_COUNT + 0.2);
 
         // Right → left (Hero→CPU), left → right (CPU→network), right → left (network→tesseract),
-        // centre (tree), then back to the right (tree→Möbius).
+        // center (tree), then back to the right (tree→Möbius).
         const moveA = smooth((phaseA(p) - MOVE_START) / MOVE_SPAN);
         const px = lerp(state.xOffset * (1 - 2 * moveA + 2 * e2 - 2 * e3) * (1 - ed), state.xOffset, er);
         const py = lerp(state.yOffset * (1 - ed), state.yOffset, er);
@@ -459,9 +345,7 @@ export function createStageScene(
 
         // The tesseract target rotates, so buffers update every frame while g > 0.
         if (m !== state.lastM || n !== state.lastN || g !== state.lastG || g > 0 || scan > 0 || pulse > 0) {
-            updateBuffers(m, n, g, d, r, px / GROUP_SCALE, py / GROUP_SCALE, scan, scanX, pulse, pulseSet, pulsePos);
-            state.lastM = m;
-            state.lastN = n;
+            updateBuffers({ m, n, g, d, r, offX: px / GROUP_SCALE, offY: py / GROUP_SCALE, scan, scanX, pulse, pulseSet, pulsePos });            state.lastN = n;
             state.lastG = g;
         }
 
@@ -474,7 +358,7 @@ export function createStageScene(
         renderer.setSize(w, h, false);
         camera.aspect = w / h;
 
-        const mobile = window.matchMedia('(max-width: 800px)').matches;
+        const mobile = window.matchMedia(MOBILE_QUERY).matches;
         const stageMobile = layout === 'stage' && mobile;
         const hostH = container.parentElement?.clientHeight ?? h;
         // Mobile: the canvas spans the viewport (so the tree can sit anywhere), but the object keeps the
@@ -558,12 +442,8 @@ export function createStageScene(
             resizeObserver.disconnect();
             intersectionObserver?.disconnect();
             lineGeo.dispose();
-            ptsGeo.dispose();
             lineMat.dispose();
-            ptsMat.dispose();
-            renderer.dispose();
-            renderer.forceContextLoss();
-            canvas.remove();
+            disposeRenderer()
         },
     };
 }

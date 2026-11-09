@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import type { SceneHandle, SceneOptions } from '../../../hooks/useThreeScene';
+import { createRenderer } from '../../../lib/three/createRenderer';
+import { clamp01, smooth } from '../../../lib/math';
 
 // Folder geometry
 const WIDTH = 3.6;
@@ -24,8 +26,6 @@ const EPOCH = performance.now(); // shared by every instance, so all heroes show
 const NEAR = new THREE.Color(0xf2f2f2);
 const FAR = new THREE.Color(0x4a4a4a);
 
-const smooth = (u: number) => u * u * (3 - 2 * u);
-
 function folderShape() {
     const l = -WIDTH / 2;
     const r = WIDTH / 2;
@@ -43,14 +43,7 @@ function folderShape() {
 }
 
 export function createProjectsHeroScene(container: HTMLElement, { reducedMotion }: SceneOptions): SceneHandle {
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    const canvas = renderer.domElement;
-    canvas.style.display = 'block';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    container.appendChild(canvas);
+    const { renderer, dispose: disposeRenderer } = createRenderer(container);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
@@ -86,8 +79,6 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
     frame.rotation.set(0.28, -0.62, 0);
     scene.add(frame);
 
-    const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-
     const applyPose = (time: number) => {
         const cycle = Math.floor(time / PERIOD);
         const u = (time / PERIOD) % 1;
@@ -120,16 +111,16 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
     let raf = 0;
     let running = false;
 
-    const frame_ = (now: number) => {
+    const tick = (now: number) => {
         applyPose((now - EPOCH) / 1000);
         render();
-        raf = requestAnimationFrame(frame_);
+        raf = requestAnimationFrame(tick);
     };
 
     const start = () => {
         if (running) return;
         running = true;
-        raf = requestAnimationFrame(frame_);
+        raf = requestAnimationFrame(tick);
     };
 
     const stop = () => {
@@ -161,9 +152,7 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
             edges.dispose();
             fill.dispose();
             folders.forEach(({ line }) => line.dispose());
-            renderer.dispose();
-            renderer.forceContextLoss();
-            canvas.remove();
+            disposeRenderer()
         },
     };
 }

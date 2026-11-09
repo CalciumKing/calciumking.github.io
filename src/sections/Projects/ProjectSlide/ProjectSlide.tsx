@@ -1,17 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Project } from '../../../data/projects';
-import { useThreeScene, type SceneFactory } from '../../../hooks/useThreeScene';
+import type { Project } from '../projectsContent';
+import ThreeCanvas from "../../../components/ThreeCanvas/ThreeCanvas";
 import styles from './ProjectSlide.module.css';
-
-function SceneMount({ factory, reducedMotion }: { factory: SceneFactory; reducedMotion: boolean }) {
-    const { containerRef, failed } = useThreeScene(factory, reducedMotion);
-    return (
-        <>
-            <div ref={containerRef} className={styles.scene} />
-            {failed && <p className={styles.fallback}>3D visualization unavailable</p>}
-        </>
-    );
-}
 
 type Props = {
     project: Project;
@@ -52,7 +42,7 @@ export default function ProjectSlide({ project, stacked, reducedMotion, active =
             aria-hidden={active ? undefined : true}
         >
             <div ref={visualRef} className={styles.visual} aria-hidden="true">
-                {scene && mountScene && <SceneMount factory={scene} reducedMotion={reducedMotion} />}
+                {scene && mountScene && <ThreeCanvas factory={scene} reducedMotion={reducedMotion} className={styles.scene} />}
             </div>
 
             <div className={styles.info}>

@@ -26,7 +26,7 @@ export const PHASES: Phase[] = [
         label: 'Approach',
         at: 0.27,
         side: 'right',
-        eyebrow: 'BACKGROUND',
+        eyebrow: '// BACKGROUND',
         heading: 'whoami',
         items: [
             'Landen Ingerslev, otherwise known online as Calcium King',
@@ -40,7 +40,7 @@ export const PHASES: Phase[] = [
         label: 'Foundation',
         at: 0.52,
         side: 'left',
-        eyebrow: 'FOUNDATION',
+        eyebrow: '// FOUNDATION',
         heading: 'Technical foundation',
         groups: [
             { label: 'Languages', items: ['Kotlin', 'Java', 'Python', 'TypeScript'] },
@@ -53,7 +53,7 @@ export const PHASES: Phase[] = [
         label: 'Direction',
         at: 0.7,
         side: 'right',
-        eyebrow: 'DIRECTION',
+        eyebrow: '// DIRECTION',
         heading: 'Current Interests',
         items: [
             'Computational intelligence and neural networks.',
@@ -67,7 +67,7 @@ export const PHASES: Phase[] = [
         label: 'Conclusion',
         at: 0.86,
         side: 'center',
-        eyebrow: 'NEXT',
+        eyebrow: '// NEXT',
         heading: 'See the work',
         body: 'Selected projects, or get in touch.',
         links: [

@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import type { SceneHandle } from '../../../hooks/useThreeScene';
 import { buildMachine } from './parts';
 import { samplePose } from './keyframes';
+import {MOBILE_MAX} from "../../../lib/layout";
+import {TAU} from "../../../lib/math";
+import {createRenderer} from "../../../lib/three/createRenderer";
 
 export type MachineSceneOptions = {
     reducedMotion: boolean;
@@ -9,8 +12,6 @@ export type MachineSceneOptions = {
 };
 
 const SPIN_RATE = 0.12; // rad/s, hero idle rotation
-const TAU = Math.PI * 2;
-const COMPACT_MAX = 800; // px, matches the CSS breakpoint
 const MOBILE_SHIFT_Y = -0.2; // machine sits in the lower part of the screen on mobile
 const PANEL_TRAVEL = 3.2;
 const IDLE_RATE = 0.4; // rad/s, part twist while running
@@ -18,14 +19,7 @@ const IDLE_RATE = 0.4; // rad/s, part twist while running
 export function createMachineScene(container: HTMLElement, options: MachineSceneOptions): SceneHandle {
     const { reducedMotion, progress } = options;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    const canvas = renderer.domElement;
-    canvas.style.display = 'block';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    container.appendChild(canvas);
+    const { renderer, dispose: disposeRenderer } = createRenderer(container);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 200);
@@ -42,7 +36,7 @@ export function createMachineScene(container: HTMLElement, options: MachineScene
         h = Math.max(1, container.clientHeight);
         renderer.setSize(w, h, false);
         camera.aspect = w / h;
-        compact = w <= COMPACT_MAX;
+        compact = w <= MOBILE_MAX;
     };
 
     let spin = reducedMotion ? 0.5 : 0;
@@ -139,8 +133,7 @@ export function createMachineScene(container: HTMLElement, options: MachineScene
             ro.disconnect();
             io.disconnect();
             machine.dispose();
-            renderer.dispose();
-            canvas.remove();
+            disposeRenderer()
         },
     };
 }

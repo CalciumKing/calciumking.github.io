@@ -29,7 +29,7 @@ export function useInfiniteScroll(enabled: boolean) {
         const wrap = (toTop: boolean) => {
             lockUntil = performance.now() + LOCK;
             acc = 0;
-            window.scrollTo(0, toTop ? 0 : maxY());
+            window.scrollTo({ top: toTop ? 0 : maxY(), behavior: 'instant' })
         };
 
         const onScroll = () => {

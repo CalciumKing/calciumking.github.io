@@ -20,6 +20,7 @@
     --branch: 2.25rem;
     --indent: 3.5rem;
     width: min(100%, 36rem);
+    --fade: clamp(0, min(calc((var(--d, 1) - 0.55) / 0.3), calc(1 - var(--r, 0) / 0.2)), 1);
 }
 
 /* --d is the directory progress (0..1) set on the stage track; it is 1 when static. */
@@ -28,7 +29,7 @@
     font-size: 0.75rem;
     letter-spacing: 0.14em;
     color: var(--color-text-muted);
-    opacity: clamp(0, min(calc((var(--d, 1) - 0.55) / 0.3), calc(1 - var(--r, 0) / 0.2)), 1);
+    opacity: var(--fade);
 }
 
 .root {
@@ -36,7 +37,7 @@
     font-weight: 700;
     letter-spacing: 0.02em;
     color: var(--color-text);
-    opacity: clamp(0, min(calc((var(--d, 1) - 0.55) / 0.3), calc(1 - var(--r, 0) / 0.2)), 1);
+    opacity: var(--fade);
 }
 
 .list {
@@ -83,7 +84,7 @@
     height: var(--row);
     padding-left: var(--indent);
     pointer-events: auto;
-    opacity: clamp(0, min(calc((var(--d, 1) - 0.55) / 0.3), calc(1 - var(--r, 0) / 0.2)), 1);
+    opacity: var(--fade);
 }
 
 .text {

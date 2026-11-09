@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import {TAU} from "../../../lib/math";
 
 const SURFACE = 0x0a0a0a;
 const LINE_STRONG = 0xd9d9d9;
 const LINE = 0x9a9a9a;
-const TAU = Math.PI * 2;
 
 export type Machine = {
     root: THREE.Group;
