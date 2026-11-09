@@ -14,7 +14,7 @@ export default function GeometrySection({ className, visual }: SectionProps) {
         >
             <div className={styles.inner}>
                 <div className={styles.content}>
-                    <p className={styles.label}>04 / GEOMETRY: PERSPECTIVE</p>
+                    <p className={styles.label}>// PERSPECTIVE</p>
                     <h2 id="geometry-title" className={styles.title}>
                         Think Beyond Convention
                     </h2>

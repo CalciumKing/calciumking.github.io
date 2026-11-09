@@ -49,7 +49,7 @@ function PhaseBody({ phase, interactive }: { phase: Phase; interactive: boolean 
     const Heading = phase.id === 'identity' ? 'h1' : 'h2';
     return (
         <div className={styles.panel}>
-            <p className={styles.eyebrow}>{phase.eyebrow}</p>
+            <p className={styles.eyebrow}>{phase.id === 'identity' ? '' : '//'} {phase.eyebrow}</p>
             <Heading className={phase.id === 'identity' ? styles.title : styles.heading}>{phase.heading}</Heading>
             {phase.body && <p className={styles.body}>{phase.body}</p>}
             {phase.items && (

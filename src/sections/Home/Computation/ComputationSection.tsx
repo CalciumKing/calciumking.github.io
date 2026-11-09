@@ -14,7 +14,7 @@ export default function ComputationSection({ className, visual }: SectionProps) 
         >
             <div className={styles.inner}>
                 <div className={styles.content}>
-                    <p className={styles.label}>02 / COMPUTATION: MINDSET</p>
+                    <p className={styles.label}>// MINDSET</p>
                     <h2 id="computation-title" className={styles.title}>
                         Understand Before Building
                     </h2>

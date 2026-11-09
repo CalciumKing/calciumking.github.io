@@ -56,7 +56,7 @@ export default function ProjectSlide({ project, stacked, reducedMotion, active =
             </div>
 
             <div className={styles.info}>
-                <p className={styles.eyebrow}>{tagline}</p>
+                <p className={styles.eyebrow}>// {tagline}</p>
                 <h2 className={styles.name}>{name}</h2>
                 <p className={styles.description}>{description}</p>
 

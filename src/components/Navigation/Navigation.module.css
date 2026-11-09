@@ -32,7 +32,7 @@
 .item + .item {
     margin-left: 1.25rem;
     padding-left: 1.25rem;
-    border-left: 1px solid var(--color-divider);
+    /*border-left: 1px solid var(--color-divider);*/
 }
 
 .link {

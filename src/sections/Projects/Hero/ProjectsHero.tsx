@@ -10,7 +10,7 @@ export default function ProjectsHero() {
     return (
         <section className={styles.hero}>
             <div className={styles.text}>
-                <p className={styles.eyebrow}>PROJECTS</p>
+                <p className={styles.eyebrow}>/PROJECTS</p>
                 <h1 className={styles.title}>Selected Work</h1>
                 <p className={styles.description}>
                     A collection of engineering, software, and independent development work.

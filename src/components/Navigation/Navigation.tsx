@@ -1,11 +1,11 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import styles from './Navigation.module.css';
 
 const LINKS = [
-    { label: 'ABOUT', to: '/about' },
-    { label: 'PROJECTS', to: '/projects' },
-    { label: 'RESUME', to: '/resume' },
-    { label: 'CONTACT', to: '/contact' },
+    { label: '/ABOUT', to: '/about' },
+    { label: '/PROJECTS', to: '/projects' },
+    { label: '/RESUME', to: '/resume' },
+    { label: '/CONTACT', to: '/contact' },
 ];
 
 export default function Navigation() {

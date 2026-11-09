@@ -14,7 +14,7 @@ export default function HeroSection({ className, visual }: SectionProps) {
         >
             <div className={styles.inner}>
                 <div className={styles.content}>
-                    <p className={styles.role}>VERSATILE PROGRAMMER</p>
+                    <p className={styles.role}>// SOFTWARE ENGINEER</p>
                     <h1 id="hero-title" className={styles.name}>
                         <span>Landen</span> <span>Ingerslev</span>
                     </h1>

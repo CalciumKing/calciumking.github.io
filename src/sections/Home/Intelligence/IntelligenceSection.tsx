@@ -14,12 +14,12 @@ export default function IntelligenceSection({ className, visual }: SectionProps)
         >
             <div className={styles.inner}>
                 <div className={styles.content}>
-                    <p className={styles.label}>03 / INTELLIGENCE: CURIOSITY</p>
+                    <p className={styles.label}>// CURIOSITY</p>
                     <h2 id="intelligence-title" className={styles.title}>
                         Intelligence Through Connection
                     </h2>
                     <p className={styles.statement}>
-                        Knowledge without boundaries lies in the unknown. I'm drawn to unfamiliar ideas, difficult questions, and unique perspectives.
+                        The unknown is the frontier of knowledge. I'm drawn to unfamiliar ideas, difficult questions, and unique perspectives.
                     </p>
                 </div>
 
