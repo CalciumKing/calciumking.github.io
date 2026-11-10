@@ -1,5 +1,5 @@
-const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('#network-bg');
-const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('#network-bg')!;
+const ctx: CanvasRenderingContext2D = canvas.getContext('2d')!;
 
 const IS_MOBILE: boolean = window.innerWidth < 768;
 const NODE_COUNT: number = IS_MOBILE ? 35 : 70;
@@ -32,11 +32,11 @@ function initNodes(): void {
 	nodes = [];
 	for (let i = 0; i < NODE_COUNT; i++) {
 		nodes.push({
-					   x: Math.random() * canvasW,
-					   y: Math.random() * canvasH,
-					   vx: (Math.random() - 0.5) * BASE_SPEED,
-					   vy: (Math.random() - 0.5) * BASE_SPEED
-				   });
+			           x: Math.random() * canvasW,
+			           y: Math.random() * canvasH,
+			           vx: (Math.random() - 0.5) * BASE_SPEED,
+			           vy: (Math.random() - 0.5) * BASE_SPEED
+		           });
 	}
 }
 
@@ -46,14 +46,14 @@ function animate(): void {
 	for (let i = 0; i < NODE_COUNT; i++) {
 		const ni: UINode = nodes[i];
 		for (let j = i + 1; j < NODE_COUNT; j++) {
-			const nj: UINode   = nodes[j],
-			      dx: number   = ni.x - nj.x,
-			      dy: number   = ni.y - nj.y,
-			      dist: number = Math.sqrt(dx * dx + dy * dy);
+			const nj: UINode = nodes[j],
+				dx: number = ni.x - nj.x,
+				dy: number = ni.y - nj.y,
+				dist: number = Math.sqrt(dx * dx + dy * dy);
 			
 			if (dist < MAX_DISTANCE) {
 				const alpha: number = 1 - dist / MAX_DISTANCE;
-				ctx.strokeStyle = `rgba(255, 255, 255, ${alpha.toFixed(3)})`;
+				ctx.strokeStyle = `rgba(255, 255, 255, ${ alpha.toFixed(3) })`;
 				ctx.lineWidth = IS_MOBILE ? 0.8 : 1;
 				ctx.beginPath();
 				ctx.moveTo(ni.x, ni.y);

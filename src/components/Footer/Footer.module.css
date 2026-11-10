@@ -1,40 +1,40 @@
 .footer {
-    border-top: 1px solid var(--color-divider);
+	border-top: 1px solid var(--color-divider);
 }
 
 .inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 1.25rem var(--gutter);
-    font-size: 0.6875rem;
-    letter-spacing: 0.14em;
-    color: var(--color-text-muted);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem 1.5rem;
+	max-width: var(--max-width);
+	margin: 0 auto;
+	padding: 1.25rem var(--gutter);
+	font-size: 0.6875rem;
+	letter-spacing: 0.14em;
+	color: var(--color-text-muted);
 }
 
 .items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 0;
 }
 
 .item + .item {
-    margin-left: 1.25rem;
-    padding-left: 1.25rem;
-    border-left: 1px solid var(--color-divider);
+	margin-left: 1.25rem;
+	padding-left: 1.25rem;
+	border-left: 1px solid var(--color-divider);
 }
 
 .copy {
-    margin: 0;
+	margin: 0;
 }
 
 @media (max-width: 560px) {
-    .item + .item {
-        margin-left: 0.75rem;
-        padding-left: 0.75rem;
-    }
+	.item + .item {
+		margin-left: 0.75rem;
+		padding-left: 0.75rem;
+	}
 }

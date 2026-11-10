@@ -1,48 +1,48 @@
 iframe {
-    width: 100%;
-    height: 70vh;
+	width: 100%;
+	height: 70vh;
 }
 
 .button {
-    font-size: 1.2em;
-    color: white;
-    font-family: 'Space Mono', monospace;
-    font-weight: bold;
-    height: auto;
-    width: auto;
-    padding: 1%;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 0 white;
-    background-color: #1b1b1c;
-    border-radius: 10px;
-    float: right;
-    margin: 2% 0;
+	font-size: 1.2em;
+	color: white;
+	font-family: 'Space Mono', monospace;
+	font-weight: bold;
+	height: auto;
+	width: auto;
+	padding: 1%;
+	cursor: pointer;
+	border: 2px solid white;
+	box-shadow: 0 0 white;
+	background-color: #1b1b1c;
+	border-radius: 10px;
+	float: right;
+	margin: 2% 0;
 }
 
 .button > i {
-    width: 3em;
-    color: white;
+	width: 3em;
+	color: white;
 }
 
 .button, .button > i {
-    transition: all .3s;
+	transition: all .3s;
 }
 
 .button:hover {
-    background: #1b1b1c;
-    color: transparent;
+	background: #1b1b1c;
+	color: transparent;
 }
 
 .button:hover > i {
-    transform: translateX(200%);
+	transform: translateX(200%);
 }
 
 .button:active {
-    transform: translate(.5vh, .5vh);
-    box-shadow: 1vh 1vh white;
+	transform: translate(.5vh, .5vh);
+	box-shadow: 1vh 1vh white;
 }
 
 .button::after {
-    display: none;
+	display: none;
 }

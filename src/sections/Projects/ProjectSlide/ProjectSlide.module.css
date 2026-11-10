@@ -1,109 +1,109 @@
 .slide {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    align-items: center;
-    gap: clamp(2rem, 6vw, 6rem);
-    height: 100%;
-    padding: 0 var(--gutter);
-    pointer-events: none;
+	display: grid;
+	grid-template-columns: 1.2fr 1fr;
+	align-items: center;
+	gap: clamp(2rem, 6vw, 6rem);
+	height: 100%;
+	padding: 0 var(--gutter);
+	pointer-events: none;
 }
 
 .slide[data-active='true'] {
-    pointer-events: auto;
+	pointer-events: auto;
 }
 
 .visual {
-    position: relative;
-    width: 100%;
-    height: 60vh;
-    border: 1px solid var(--color-divider);
+	position: relative;
+	width: 100%;
+	height: 60vh;
+	border: 1px solid var(--color-divider);
 }
 
 .scene {
-    position: absolute;
-    inset: 0;
+	position: absolute;
+	inset: 0;
 }
 
 .eyebrow {
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    color: var(--color-text-muted);
+	font-size: 0.75rem;
+	letter-spacing: 0.14em;
+	color: var(--color-text-muted);
 }
 
 .name {
-    margin-top: 0.75rem;
-    font-size: clamp(1.75rem, 3.2vw, 2.75rem);
-    line-height: 1.15;
-    font-weight: 700;
+	margin-top: 0.75rem;
+	font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+	line-height: 1.15;
+	font-weight: 700;
 }
 
 .description {
-    margin-top: 1.25rem;
-    max-width: 34rem;
-    font-size: 0.9375rem;
-    color: var(--color-text-muted);
+	margin-top: 1.25rem;
+	max-width: 34rem;
+	font-size: 0.9375rem;
+	color: var(--color-text-muted);
 }
 
 .meta {
-    display: grid;
-    gap: 1.25rem;
-    margin: 1.75rem 0 0;
+	display: grid;
+	gap: 1.25rem;
+	margin: 1.75rem 0 0;
 }
 
 .label {
-    font-size: 0.6875rem;
-    letter-spacing: 0.14em;
-    color: var(--color-text-muted);
+	font-size: 0.6875rem;
+	letter-spacing: 0.14em;
+	color: var(--color-text-muted);
 }
 
 .value {
-    margin: 0.35rem 0 0;
-    font-size: 0.875rem;
+	margin: 0.35rem 0 0;
+	font-size: 0.875rem;
 }
 
 .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 2rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-top: 2rem;
 }
 
 .link {
-    padding: 0.6rem 0.9rem;
-    border: 1px solid var(--color-line);
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    color: var(--color-text-muted);
-    transition: color 0.2s ease, border-color 0.2s ease;
+	padding: 0.6rem 0.9rem;
+	border: 1px solid var(--color-line);
+	font-size: 0.75rem;
+	letter-spacing: 0.14em;
+	color: var(--color-text-muted);
+	transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .link:hover {
-    color: var(--color-text);
-    border-color: var(--color-line-strong);
+	color: var(--color-text);
+	border-color: var(--color-line-strong);
 }
 
 /* Stacked mode (reduced motion or narrow screens): normal flow, no pinning. */
 .stacked {
-    height: auto;
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-    border-top: 1px solid var(--color-divider);
-    pointer-events: auto;
+	height: auto;
+	padding-top: 4rem;
+	padding-bottom: 4rem;
+	border-top: 1px solid var(--color-divider);
+	pointer-events: auto;
 }
 
 @media (max-width: 800px) {
-    .slide {
-        grid-template-columns: 1fr;
-        gap: 1.75rem;
-    }
-
-    .visual {
-        height: auto;
-        aspect-ratio: 4 / 3;
-    }
-
-    .stacked {
-        padding-top: 2.5rem;
-        padding-bottom: 2.5rem;
-    }
+	.slide {
+		grid-template-columns: 1fr;
+		gap: 1.75rem;
+	}
+	
+	.visual {
+		height: auto;
+		aspect-ratio: 4 / 3;
+	}
+	
+	.stacked {
+		padding-top: 2.5rem;
+		padding-bottom: 2.5rem;
+	}
 }

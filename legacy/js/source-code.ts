@@ -1,7 +1,7 @@
 // This script displays its own source code as a page element on the 404 page
 
 (function (): void {
-	const codeElement: HTMLElement = document.querySelector<HTMLElement>('#code-element');
+	const codeElement: HTMLElement = document.querySelector<HTMLElement>('#code-element')!;
 	
 	fetch('/js/source-code.ts')
 		.then((result: Response): Promise<string> => result.text())

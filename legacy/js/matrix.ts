@@ -1,5 +1,5 @@
-const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('canvas');
-const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
+const canvas: HTMLCanvasElement = document.querySelector<HTMLCanvasElement>('canvas')!;
+const ctx: CanvasRenderingContext2D = canvas.getContext('2d')!;
 
 const characters: string = 'abcdefghijklmnopqrstuvwxyz1234567890';
 const fontSize: number = 16;
@@ -23,7 +23,7 @@ function draw(): void {
 	ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	
-	ctx.font = `${fontSize}px space mono`;
+	ctx.font = `${ fontSize }px space mono`;
 	ctx.fillStyle = 'rgb(255, 255, 255, 0.4)';
 	
 	for (let i = 0; i < drops.length; i++) {

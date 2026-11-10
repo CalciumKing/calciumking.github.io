@@ -17,10 +17,10 @@ export const DIR_END = 0.75;
 export const DIR_MORPH = 0.85;
 
 export const STAGE_PROGRESS = {
-    hero: 0,
-    computation: 0.322 * OLD_SHARE,
-    intelligence: 0.7 * OLD_SHARE,
-    geometry: OLD_SHARE,
+	hero: 0,
+	computation: 0.322 * OLD_SHARE,
+	intelligence: 0.7 * OLD_SHARE,
+	geometry: OLD_SHARE
 } as const;
 
 export const phaseA = (p: number) => clamp01(p / SCROLL_A);

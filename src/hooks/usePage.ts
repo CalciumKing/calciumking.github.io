@@ -4,7 +4,7 @@ import { useReducedMotion } from './useReducedMotion';
 
 /** Sets the title and enables page wrapping (off for reduced motion, or when `wrap` is false). */
 export function usePage(title: string, wrap = true) {
-    const reduced = useReducedMotion();
-    useDocumentTitle(`${title} | Calcium King`);
-    useInfiniteScroll(wrap && !reduced);
+	const reduced = useReducedMotion();
+	useDocumentTitle(`${ title } | Calcium King`);
+	useInfiniteScroll(wrap && !reduced);
 }

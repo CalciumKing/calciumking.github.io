@@ -15,8 +15,8 @@ export const COLOR_VERTEX = 0xf2f2f2;
 export const STATIC_TIME = 6; // fixed pose (seconds) for reduced motion
 
 function pushPoint(out: number[], u: number, v: number) {
-    const r = RADIUS + v * Math.cos(u / 2);
-    out.push(r * Math.cos(u), r * Math.sin(u), v * Math.sin(u / 2));
+	const r = RADIUS + v * Math.cos(u / 2);
+	out.push(r * Math.cos(u), r * Math.sin(u), v * Math.sin(u / 2));
 }
 
 /**
@@ -26,30 +26,30 @@ function pushPoint(out: number[], u: number, v: number) {
  * a single 2π loop. Transverse lines use u ∈ [0, 2π) so none is doubled.
  */
 export function buildGeometry() {
-    const longitudinal: number[] = [];
-    const step = (Math.PI * 2) / SAMPLES;
-
-    for (let k = 0; k <= LONG_DIVISIONS; k++) {
-        const v = (HALF_WIDTH * k) / LONG_DIVISIONS;
-        const total = k === 0 ? SAMPLES : SAMPLES * 2;
-        for (let i = 0; i < total; i++) {
-            pushPoint(longitudinal, i * step, v);
-            pushPoint(longitudinal, (i + 1) * step, v);
-        }
-    }
-
-    const transverse: number[] = [];
-    for (let i = 0; i < TRANSVERSE_COUNT; i++) {
-        const u = (i * Math.PI * 2) / TRANSVERSE_COUNT;
-        pushPoint(transverse, u, -HALF_WIDTH);
-        pushPoint(transverse, u, HALF_WIDTH);
-    }
-
-    const make = (data: number[]) => {
-        const g = new THREE.BufferGeometry();
-        g.setAttribute('position', new THREE.Float32BufferAttribute(data, 3));
-        return g;
-    };
-
-    return { longitudinal: make(longitudinal), transverse: make(transverse) };
+	const longitudinal: number[] = [];
+	const step = (Math.PI * 2) / SAMPLES;
+	
+	for (let k = 0; k <= LONG_DIVISIONS; k++) {
+		const v = (HALF_WIDTH * k) / LONG_DIVISIONS;
+		const total = k === 0 ? SAMPLES : SAMPLES * 2;
+		for (let i = 0; i < total; i++) {
+			pushPoint(longitudinal, i * step, v);
+			pushPoint(longitudinal, (i + 1) * step, v);
+		}
+	}
+	
+	const transverse: number[] = [];
+	for (let i = 0; i < TRANSVERSE_COUNT; i++) {
+		const u = (i * Math.PI * 2) / TRANSVERSE_COUNT;
+		pushPoint(transverse, u, -HALF_WIDTH);
+		pushPoint(transverse, u, HALF_WIDTH);
+	}
+	
+	const make = (data: number[]) => {
+		const g = new THREE.BufferGeometry();
+		g.setAttribute('position', new THREE.Float32BufferAttribute(data, 3));
+		return g;
+	};
+	
+	return { longitudinal: make(longitudinal), transverse: make(transverse) };
 }
