@@ -16,13 +16,13 @@ export { OLD_SHARE, STAGE_PROGRESS } from './phases';
 export type StageLayout = 'stage' | 'inline';
 export type StageOptions = {
 	reducedMotion: boolean;
-	layout: StageLayout; // 'stage': full-viewport, shifts right→left. 'inline': centered, fixed progress.
+	layout: StageLayout;
 	progress: {
 		current: number
 	};
 	tree?: {
 		current: HTMLElement | null
-	}; // directory tree; its [data-tree-line] elements are the morph targets
+	};
 };
 type Frame = {
 	m: number;
@@ -45,20 +45,15 @@ const CPU_POSE = { x: -0.95, y: 0, z: Math.PI / 4 };
 const DELAY_RADIUS = 3.8;
 
 const NET_POSE = { x: 0.18, y: -0.6, z: 0 };
-const PULSE_PERIOD = 7; // seconds per signal cycle
-const PULSE_SWEEP = 4.5; // seconds of that cycle spent sweeping; the rest is rest
+const PULSE_PERIOD = 7;
+const PULSE_SWEEP = 4.5;
 
-/**
- * One line buffer morphing between the Möbius strip (progress 0) and the CPU (progress 1).
- * The scene is a pure function of progress, so scrolling back reverses it.
- */
 export function createStageScene(
 	container: HTMLElement,
 	{ reducedMotion, layout, progress, tree }: StageOptions
 ): SceneHandle {
 	const { renderer, dispose: disposeRenderer } = createRenderer(container);
 	
-	// ---- Source (Möbius) data ----
 	const mobius = buildGeometry();
 	const lp = new Float32Array(mobius.longitudinal.getAttribute('position').array);
 	const tp = new Float32Array(mobius.transverse.getAttribute('position').array);
@@ -80,7 +75,6 @@ export function createStageScene(
 	const colorTo = new Float32Array(segCount * 6);
 	for (let i = 0; i < segCount; i++) setColor(colorFrom, i, i < lpSegs ? cBright : cGray);
 	
-	// ---- Target (CPU) data ----
 	const base = buildCpuSegments();
 	const cpu = resampleSegments(base, segCount);
 	const to = new Float32Array(segCount * 6);
@@ -93,12 +87,9 @@ export function createStageScene(
 		const mx = (s.a[0] + s.b[0]) / 2;
 		const my = (s.a[1] + s.b[1]) / 2;
 		midX[i] = mx;
-		delay[i] = clamp01(Math.hypot(mx, my) / DELAY_RADIUS); // center resolves first
+		delay[i] = clamp01(Math.hypot(mx, my) / DELAY_RADIUS);
 	});
 	
-	// ---- Target 2 (network) data ----
-	// CPU body/die segments become node cages, lead segments become edges.
-	// Both sides are paired in left-to-right order so the reorganization stays coherent.
 	const netGeo = buildNetworkSegments();
 	const brightIdx: number[] = [];
 	const leadIdx: number[] = [];
@@ -108,29 +99,29 @@ export function createStageScene(
 	const toNet = new Float32Array(segCount * 6);
 	const colorNet = new Float32Array(segCount * 6);
 	const delay2 = new Float32Array(segCount);
-	const netPos = new Float32Array(segCount); // position along the layers (0-LAYER_COUNT-1)
-	const netMask = new Uint8Array(segCount); // signal path-set membership
+	const netPos = new Float32Array(segCount);
+	const netMask = new Uint8Array(segCount);
 	
 	const pair = (idx: number[], segs: NetSegment[]) => {
 		const order = [...idx].sort((p, q) => midX[p] - midX[q]);
-		const sorted = [...segs].sort((p, q) => p.a[0] + p.b[0] - (q.a[0] + q.b[0]));
+		const sorted = [...segs].sort((p, q) =>
+			                              p.a[0] + p.b[0] - (q.a[0] + q.b[0]));
 		order.forEach((i, k) => {
 			const s = sorted[k];
-			if (!s) return;
+			if (!s)
+				return;
 			toNet.set(s.a, i * 6);
 			toNet.set(s.b, i * 6 + 3);
 			setColor(colorNet, i, s.bright ? cBright : cGray);
 			const pos = ((s.a[0] + s.b[0]) / 2 - LAYER_X0) / LAYER_GAP;
 			netPos[i] = pos;
 			netMask[i] = s.mask;
-			delay2[i] = clamp01(pos / (LAYER_COUNT - 1)); // input layer resolves first
+			delay2[i] = clamp01(pos / (LAYER_COUNT - 1));
 		});
 	};
 	pair(brightIdx, resampleSegments(netGeo.nodes, brightIdx.length));
 	pair(leadIdx, resampleSegments(netGeo.edges, leadIdx.length));
 	
-	// ---- Target 3 (tesseract) data ----
-	// Each segment becomes a slice [f0, f1] of one tesseract edge; edge endpoints are re-projected every frame.
 	const EDGE_COUNT = TESSERACT_EDGES.length;
 	const segEdge = new Uint8Array(segCount);
 	const segVa = new Uint8Array(segCount);
@@ -140,7 +131,6 @@ export function createStageScene(
 	{
 		const nx = (i: number) => toNet[i * 6] + toNet[i * 6 + 3];
 		const ny = (i: number) => toNet[i * 6 + 1] + toNet[i * 6 + 4];
-		// Network segments left→right are dealt to tesseract edges left→right.
 		const bySeg = Array.from({ length: segCount }, (_, i) => i).sort(
 			(p, q) => nx(p) - nx(q) || ny(p) - ny(q)
 		);
@@ -149,7 +139,8 @@ export function createStageScene(
 		let cursor = 0;
 		tesseractEdgeOrder().forEach((edge, k) => {
 			const size = base + (k < extra ? 1 : 0);
-			const chunk = bySeg.slice(cursor, cursor + size).sort((p, q) => ny(p) - ny(q));
+			const chunk
+				= bySeg.slice(cursor, cursor + size).sort((p, q) => ny(p) - ny(q));
 			cursor += size;
 			chunk.forEach((i, j) => {
 				segEdge[i] = edge;
@@ -160,14 +151,11 @@ export function createStageScene(
 			});
 		});
 	}
-	const proj = new Float32Array(48); // 16 projected vertices
-	const projW = new Float32Array(16); // rotated w per vertex
+	const proj = new Float32Array(48);
+	const projW = new Float32Array(16);
 	const edgeShade = new Float32Array(EDGE_COUNT).fill(1);
 	const brightRGB = [cBright.r, cBright.g, cBright.b];
 	
-	// ---- Target 4 (directory tree) data ----
-	// Segments keep their tesseract order (edge by edge, left→right) and are dealt along the tree's lines
-	// (spine first, then each branch). Positions are measured from the DOM (measureTree).
 	const edgeRank = new Uint8Array(EDGE_COUNT);
 	tesseractEdgeOrder().forEach((e, k) => {
 		edgeRank[e] = k;
@@ -178,17 +166,15 @@ export function createStageScene(
 	const toTree = new Float32Array(segCount * 6);
 	const delay4 = new Float32Array(segCount);
 	treeOrder.forEach((i, r) => {
-		delay4[i] = r / segCount; // top of the tree resolves first
+		delay4[i] = r / segCount;
 	});
 	const grayRGB = [cGray.r, cGray.g, cGray.b];
 	let treeReady = false;
 	
-	// Return phase: tree targets re-expressed in the group's moving frame so they stay fixed in the world.
 	const treeLocal = new Float32Array(segCount * 6);
 	const invWorld = new THREE.Matrix4();
 	const tmpV = new THREE.Vector3();
 	
-	// ---- Scene objects ----
 	const linePos = new Float32Array(from);
 	const lineCol = new Float32Array(colorFrom);
 	const posAttr = new THREE.BufferAttribute(linePos, 3).setUsage(THREE.DynamicDrawUsage);
@@ -210,8 +196,8 @@ export function createStageScene(
 	scene.add(group);
 	const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 	
-	// ---- Per-frame update ----
-	const updateBuffers = ({ m, n, g, d, r, offX, offY, scan, scanX, pulse, pulseSet, pulsePos }: Frame) => {
+	const updateBuffers = (
+		{ m, n, g, d, r, offX, offY, scan, scanX, pulse, pulseSet, pulsePos }: Frame) => {
 		if (r > 0 && treeReady) {
 			invWorld.copy(group.matrixWorld).invert();
 			for (let i = 0; i < segCount; i++) {
@@ -227,7 +213,6 @@ export function createStageScene(
 		if (g > 0) {
 			projectTesseract(tesseractAngles(state.tessTime), proj, projW);
 			TESSERACT_EDGES.forEach(([a, b], e) => {
-				// Nearer in w (larger, closer to the 4D viewpoint) reads brighter: a depth cue.
 				edgeShade[e] = 0.5 + 0.5 * ((projW[a] + projW[b]) / 8 + 0.5);
 			});
 		}
@@ -238,9 +223,8 @@ export function createStageScene(
 			const t4 = d > 0 && treeReady ? smooth((d - delay4[i] * 0.5) / 0.5) : 0;
 			const t5 = r > 0 ? smooth((r - (1 - delay4[i]) * 0.5) / 0.5) : 0;
 			let boost = scan > 0 ? scan * 0.5 * Math.exp(-((midX[i] - scanX) ** 2) / 0.6) : 0;
-			if (pulse > 0 && ((netMask[i] >> pulseSet) & 1) === 1) {
+			if (pulse > 0 && ((netMask[i] >> pulseSet) & 1) === 1)
 				boost += pulse * 0.9 * Math.exp(-((netPos[i] - pulsePos) ** 2) / 0.15);
-			}
 			const o = i * 6;
 			const va = segVa[i] * 3;
 			const vb = segVb[i] * 3;
@@ -258,7 +242,14 @@ export function createStageScene(
 					c += (brightRGB[kk] * edgeShade[segEdge[i]] - c) * t3;
 				}
 				if (t4 > 0) {
-					const target = r > 0 ? treeLocal[o + k] : toTree[o + k] - (kk === 0 ? offX : kk === 1 ? offY : 0);
+					const target = r > 0
+					               ? treeLocal[o + k]
+					               : toTree[o + k] - (
+						kk === 0
+						? offX
+						: kk === 1
+						  ? offY
+						  : 0);
 					pos += (target - pos) * t4;
 					c += (grayRGB[kk] - c) * t4;
 				}
@@ -277,28 +268,27 @@ export function createStageScene(
 	
 	const state = {
 		rotTime: STATIC_TIME,
-		tessTime: 0, // tesseract time; stops as the directory forms
+		tessTime: 0,
 		clock: 0,
 		xOffset: 0,
 		yOffset: 0,
-		visW: 1, // visible world size on the z = 0 plane
+		visW: 1,
 		visH: 1,
 		lastM: -1,
 		lastN: -1,
 		lastG: -1
 	};
 	
-	/** Converts the DOM tree's lines to group-local coordinates and deals the segments along them. */
 	const measureTree = () => {
 		treeReady = layoutTree(container, tree?.current, state.visW, state.visH, GROUP_SCALE, treeOrder, toTree);
 	};
 	
 	const draw = () => {
 		const all = progress.current;
-		const raw = oldOf(all); // earlier phases, 0..1
-		const d = clamp01(dirOf(all) / DIR_MORPH); // tesseract → tree
-		const r = retOf(all); // tree → Möbius
-		const p = clamp01(raw / SPLIT); // the original 0..1 progress for the earlier phases
+		const raw = oldOf(all);
+		const d = clamp01(dirOf(all) / DIR_MORPH);
+		const r = retOf(all);
+		const p = clamp01(raw / SPLIT);
 		const g = geoOf(raw);
 		const m = morphOf(p);
 		const n = netOf(p);
@@ -315,20 +305,17 @@ export function createStageScene(
 		const pulseSet = Math.floor(cycle) % SIGNAL_SET_COUNT;
 		const pulsePos = -0.6 + ((((cycle % 1) * PULSE_PERIOD) / PULSE_SWEEP) * LAYER_COUNT + 0.2);
 		
-		// Right → left (Hero→CPU), left → right (CPU→network), right → left (network→tesseract),
-		// center (tree), then back to the right (tree→Möbius).
 		const moveA = smooth((phaseA(p) - MOVE_START) / MOVE_SPAN);
 		const px = lerp(state.xOffset * (1 - 2 * moveA + 2 * e2 - 2 * e3) * (1 - ed), state.xOffset, er);
 		const py = lerp(state.yOffset * (1 - ed), state.yOffset, er);
 		group.position.set(px, py, 0);
 		
-		// Pose: Möbius tumble → tilted CPU → slightly rotated network → upright → Möbius tumble again.
 		const t = state.rotTime;
 		const sway = reducedMotion ? 0 : Math.sin(state.clock * 0.25) * 0.07;
 		const mx = 1.0 + 0.2 * Math.sin(t * 0.11);
 		const mz = 0.25 * Math.sin(t * 0.07);
 		const yM = t * 0.14;
-		const yMw = yM - TAU * Math.round(yM / TAU); // wrapped, so the return does not spin through many turns
+		const yMw = yM - TAU * Math.round(yM / TAU);
 		const targetY = CPU_POSE.y + sway;
 		const nearestY = targetY + TAU * Math.round((yM - targetY) / TAU);
 		const y1 = e2 > 0 ? targetY : lerp(yM, nearestY, e);
@@ -342,21 +329,12 @@ export function createStageScene(
 		);
 		group.updateMatrixWorld(true);
 		
-		// The tesseract target rotates, so buffers update every frame while g > 0.
 		if (m !== state.lastM || n !== state.lastN || g !== state.lastG || g > 0 || scan > 0 || pulse > 0) {
 			updateBuffers({
-				              m,
-				              n,
-				              g,
-				              d,
-				              r,
+				              m, n, g, d, r,
 				              offX: px / GROUP_SCALE,
 				              offY: py / GROUP_SCALE,
-				              scan,
-				              scanX,
-				              pulse,
-				              pulseSet,
-				              pulsePos
+				              scan, scanX, pulse, pulseSet, pulsePos
 			              });
 			state.lastN = n;
 			state.lastG = g;
@@ -374,8 +352,6 @@ export function createStageScene(
 		const mobile = window.matchMedia(MOBILE_QUERY).matches;
 		const stageMobile = layout === 'stage' && mobile;
 		const hostH = container.parentElement?.clientHeight ?? h;
-		// Mobile: the canvas spans the viewport (so the tree can sit anywhere), but the object keeps the
-		// framing it had in the old lower-46% canvas: same camera distance and same on-screen size.
 		const refAspect = stageMobile ? w / (hostH * 0.54) : camera.aspect;
 		const z = refAspect < 1 ? CAMERA_Z / refAspect : CAMERA_Z;
 		const tan = Math.tan(THREE.MathUtils.degToRad(17.5));
@@ -386,11 +362,10 @@ export function createStageScene(
 		state.visW = state.visH * camera.aspect;
 		
 		if (layout === 'stage' && !mobile) {
-			state.xOffset = ((Math.min(w, 1200) * 0.22) / w) * state.visW; // center of the hero's right column
+			state.xOffset = ((Math.min(w, 1200) * 0.22) / w) * state.visW;
 			state.yOffset = 0;
 		} else if (stageMobile) {
 			state.xOffset = 0;
-			// Move the object down to where the old lower-46% canvas centered it (73% of the stage height).
 			state.yOffset = (-(0.73 * hostH - (container.offsetTop + h / 2)) * state.visH) / h;
 		} else {
 			state.xOffset = 0;
@@ -414,13 +389,15 @@ export function createStageScene(
 		state.clock += dt;
 		const all = progress.current;
 		const spin = Math.max(1 - smooth(morphOf(oldOf(all) / SPLIT)), smooth(retOf(all)));
-		state.rotTime += dt * spin; // the Möbius resumes tumbling as it re-forms
-		state.tessTime += dt * (1 - smooth(dirOf(all) / 0.5)); // the tesseract comes to rest as the tree forms
-		if (dirOf(all) < 1 || retOf(all) > 0) draw(); // the canvas is only invisible while the DOM tree is shown
+		state.rotTime += dt * spin;
+		state.tessTime += dt * (1 - smooth(dirOf(all) / 0.5));
+		if (dirOf(all) < 1 || retOf(all) > 0)
+			draw();
 		raf = requestAnimationFrame(frame);
 	};
 	const start = () => {
-		if (running) return;
+		if (running)
+			return;
 		running = true;
 		last = performance.now();
 		raf = requestAnimationFrame(frame);
@@ -432,18 +409,22 @@ export function createStageScene(
 	
 	const resizeObserver = new ResizeObserver(fit);
 	resizeObserver.observe(container);
-	if (tree?.current) resizeObserver.observe(tree.current);
+	if (tree?.current)
+		resizeObserver.observe(tree.current);
 	fit();
-	// Font swaps change the tree's metrics after the first measurement.
+	
 	void document.fonts?.ready.then(() => {
-		if (!disposed) fit();
+		if (!disposed)
+			fit();
 	});
 	
 	let intersectionObserver: IntersectionObserver | null = null;
 	if (!reducedMotion) {
 		intersectionObserver = new IntersectionObserver((entries) => {
-			if (entries[0]?.isIntersecting) start();
-			else stop();
+			if (entries[0]?.isIntersecting)
+				start();
+			else
+				stop();
 		});
 		intersectionObserver.observe(container);
 	}

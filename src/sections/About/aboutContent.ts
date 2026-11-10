@@ -1,7 +1,7 @@
 export type Phase = {
 	id: string;
-	label: string; // section rail label
-	at: number; // scroll progress where this phase is fully established
+	label: string;
+	at: number;
 	side: 'left' | 'right' | 'center';
 	eyebrow: string;
 	heading: string;

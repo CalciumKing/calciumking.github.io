@@ -82,7 +82,6 @@
 	border-color: var(--color-line-strong);
 }
 
-/* Stacked mode (reduced motion or narrow screens): normal flow, no pinning. */
 .stacked {
 	height: auto;
 	padding-top: 4rem;

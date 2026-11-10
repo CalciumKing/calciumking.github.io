@@ -31,12 +31,13 @@ type CanvasProps = {
 	layout: StageLayout;
 	reducedMotion: boolean;
 	className: string;
-	tree?: RefObject<HTMLElement>; // directory tree element the scene measures (stage layout only)
+	tree?: RefObject<HTMLElement>;
 };
 
 function StageCanvas({ progress, layout, reducedMotion, className, tree }: CanvasProps) {
 	const factory = useCallback<SceneFactory>(
-		(container, options) => createStageScene(container, { ...options, layout, progress, tree }),
+		(container, options) =>
+			createStageScene(container, { ...options, layout, progress, tree }),
 		[layout, progress, tree]
 	);
 	return <ThreeCanvas factory={ factory } reducedMotion={ reducedMotion } className={ className }/>;
@@ -49,7 +50,6 @@ export default function HomeStage() {
 	const progress = useScrollProgress(trackRef, !reducedMotion);
 	const directoryActive = useProgressRange(progress, 0.65, 0.8, !reducedMotion);
 	
-	// Reduced motion: two ordinary stacked sections, each with a static render.
 	if (reducedMotion) {
 		return (
 			<>

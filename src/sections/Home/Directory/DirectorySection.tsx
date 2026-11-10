@@ -4,7 +4,7 @@ import styles from './DirectorySection.module.css';
 
 type SectionProps = {
 	className?: string;
-	treeRef?: RefObject<HTMLDivElement>; // lets the stage scene measure the tree lines
+	treeRef?: RefObject<HTMLDivElement>;
 };
 
 const ENTRIES = [

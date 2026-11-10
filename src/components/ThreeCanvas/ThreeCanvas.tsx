@@ -7,7 +7,6 @@ type Props = {
 	className: string
 };
 
-/** Mounts a Three.js scene. `factory` must be memoized (useCallback). Shows a fallback if WebGL fails. */
 export default function ThreeCanvas({ factory, reducedMotion, className }: Props) {
 	const { containerRef, failed } = useThreeScene(factory, reducedMotion);
 	return (

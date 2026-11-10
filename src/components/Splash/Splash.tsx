@@ -2,18 +2,17 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from './Splash.module.css';
 
-const HOLD = 700; // ms fully visible
-const FADE = 500; // ms fade-out, must match the CSS transition
+const HOLD = 700;
+const FADE = 500;
 
 export default function Splash() {
 	const { pathname } = useLocation();
 	const first = useRef(true);
 	const [phase, setPhase] = useState<'off' | 'on' | 'fading'>('off');
 	
-	// Layout effect: the overlay is in place before the new page's first paint.
 	useLayoutEffect(() => {
 		if (first.current) {
-			first.current = false; // initial load is handled by the splash in index.html
+			first.current = false;
 			return;
 		}
 		setPhase('on');
@@ -25,7 +24,8 @@ export default function Splash() {
 		};
 	}, [pathname]);
 	
-	if (phase === 'off') return null;
+	if (phase === 'off')
+		return null;
 	
 	return (
 		<div className={ `${ styles.splash } ${ phase === 'fading' ? styles.hidden : '' }` } aria-hidden="true">

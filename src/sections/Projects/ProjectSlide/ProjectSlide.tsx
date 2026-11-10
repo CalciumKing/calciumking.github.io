@@ -7,8 +7,8 @@ type Props = {
 	project: Project;
 	stacked: boolean;
 	reducedMotion: boolean;
-	active?: boolean; // stage mode: only the active slide is focusable/clickable
-	near?: boolean; // stage mode: mount the scene only near the foreground
+	active?: boolean;
+	near?: boolean;
 };
 
 export default function ProjectSlide({ project, stacked, reducedMotion, active = true, near = true }: Props) {
@@ -20,10 +20,10 @@ export default function ProjectSlide({ project, stacked, reducedMotion, active =
 		rootRef.current?.toggleAttribute('inert', !active);
 	}, [active]);
 	
-	// Stacked mode: mount the scene only while its frame is near the viewport.
 	useEffect(() => {
 		const el = visualRef.current;
-		if (!stacked || !el) return;
+		if (!stacked || !el)
+			return;
 		const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), {
 			rootMargin: '50% 0px'
 		});

@@ -11,21 +11,21 @@ export type Machine = {
 	stack: {
 		g: THREE.Group;
 		x: number
-	}[]; // parts spaced along x (stretched by the pose)
+	}[];
 	spinners: {
 		g: THREE.Group;
 		k: number
-	}[]; // parts that twist with pose.twist
+	}[];
 	panels: {
 		g: THREE.Group;
 		dy: number;
 		dz: number;
 		k: number
-	}[]; // shell panels, radial direction + travel factor
+	}[];
 	bands: {
 		g: THREE.Group;
 		k: number
-	}[]; // shell rings that idle-rotate about the axis
+	}[];
 	spindle: THREE.Group;
 	setShellOpacity: (o: number) => void;
 	dispose: () => void;
@@ -35,9 +35,8 @@ type Fade = {
 	mesh?: THREE.Mesh;
 	lines: THREE.LineSegments
 };
-type Prof = [number, number][]; // [radius, along-axis]
+type Prof = [number, number][];
 
-/** Lathe profile revolved around the machine's x axis, centered on its own midpoint. */
 const lathe = (pts: Prof, seg: number, phiStart = 0, phiLength = TAU) => {
 	const geo = new THREE.LatheGeometry(
 		pts.map(([r, y]) => new THREE.Vector2(r, y)),
@@ -51,7 +50,6 @@ const lathe = (pts: Prof, seg: number, phiStart = 0, phiLength = TAU) => {
 	return geo;
 };
 
-/** Copies `base` (axis along x) `count` times around the x axis at `radius`, merged into one geometry. */
 const ringOf = (base: THREE.BufferGeometry, count: number, radius: number) => {
 	const list: THREE.BufferGeometry[] = [];
 	for (let i = 0; i < count; i++) {
@@ -113,12 +111,12 @@ export function buildMachine(): Machine {
 	const place = (g: THREE.Group, x: number, spin = 0) => {
 		g.position.x = x;
 		stack.push({ g, x });
-		if (spin) spinners.push({ g, k: spin });
+		if (spin)
+			spinners.push({ g, k: spin });
 		root.add(g);
 		return g;
 	};
 	
-	// ---- Rear cap: dished disc with a ring of bolts ----
 	{
 		const g = new THREE.Group();
 		g.add(part(lathe([[0.5, -0.1], [1.6, -0.1], [1.6, 0.04], [1.3, 0.1], [0.5, 0.1], [0.5, -0.1]], 28),
@@ -130,7 +128,6 @@ export function buildMachine(): Machine {
 		place(g, -3.2);
 	}
 	
-	// ---- Pod carrier: hub with six capsule pods ----
 	{
 		const g = new THREE.Group();
 		g.add(part(lathe([[0.22, -0.2], [0.5, -0.2], [0.5, 0.2], [0.22, 0.2], [0.22, -0.2]], 20), LINE_STRONG));
@@ -146,7 +143,6 @@ export function buildMachine(): Machine {
 		place(g, -2.4, 1);
 	}
 	
-	// ---- Knurled ring ----
 	{
 		const g = new THREE.Group();
 		g.add(part(lathe([[1.0, -0.25], [1.12, -0.25], [1.12, 0.25], [1.0, 0.25], [1.0, -0.25]], 24), LINE_STRONG));
@@ -154,7 +150,6 @@ export function buildMachine(): Machine {
 		place(g, -1.6, -0.6);
 	}
 	
-	// ---- Housings: ridged barrels, split around the core ----
 	const housing = (mirror: boolean) => {
 		const L = 1.2;
 		const prof: Prof = [[0.6, 0], [1.2, 0], [1.2, 0.08], [1.0, 0.08]];
@@ -178,7 +173,6 @@ export function buildMachine(): Machine {
 	}
 	place(part(housing(true), LINE_STRONG), 0.62);
 	
-	// ---- Fin fan: five tabbed discs ----
 	for (let i = 0; i < 5; i++) {
 		const r = 0.98 - i * 0.05;
 		const g = new THREE.Group();
@@ -187,7 +181,6 @@ export function buildMachine(): Machine {
 		place(g, 1.55 + i * 0.16, 0.3 * (i + 1) * (i % 2 ? -1 : 1));
 	}
 	
-	// ---- Petal plate: six-lobed ----
 	{
 		const g = new THREE.Group();
 		const s = new THREE.Shape();
@@ -197,8 +190,10 @@ export function buildMachine(): Machine {
 			const r = 0.7 + 0.28 * Math.cos(6 * a);
 			const x = r * Math.cos(a);
 			const y = r * Math.sin(a);
-			if (i) s.lineTo(x, y);
-			else s.moveTo(x, y);
+			if (i)
+				s.lineTo(x, y);
+			else
+				s.moveTo(x, y);
 		}
 		s.closePath();
 		s.holes.push(new THREE.Path(new THREE.EllipseCurve(0, 0, 0.2, 0.2, 0, TAU, true, 0).getPoints(20)));
@@ -210,7 +205,6 @@ export function buildMachine(): Machine {
 		place(g, 2.55, 0.5);
 	}
 	
-	// ---- Front cap: toothed ring ----
 	{
 		const g = new THREE.Group();
 		g.add(part(lathe([[0.5, -0.15], [1.3, -0.15], [1.3, 0.1], [1.0, 0.15], [0.5, 0.15], [0.5, -0.15]], 28),
@@ -219,7 +213,6 @@ export function buildMachine(): Machine {
 		place(g, 3.2);
 	}
 	
-	// ---- Core (fixed at the center): faceted heart and a thin ring ----
 	{
 		const g = new THREE.Group();
 		g.add(part(new THREE.IcosahedronGeometry(0.4, 1), LINE_STRONG));
@@ -230,19 +223,17 @@ export function buildMachine(): Machine {
 		root.add(g);
 	}
 	
-	// ---- Spindle through everything ----
 	const spindleGeo = new THREE.CylinderGeometry(0.1, 0.1, 7, 12);
 	spindleGeo.rotateZ(-Math.PI / 2);
 	const spindle = part(spindleGeo, LINE);
 	spindle.position.x = 0.1;
 	root.add(spindle);
 	
-	// ---- Shell: 4 bands x 8 panels fully enclose the machine ----
 	const panels: Machine['panels'] = [];
 	const bands: Machine['bands'] = [];
 	const BANDS = 4;
 	const SEGS = 8;
-	const SPAN = 7.2; // length covered along x
+	const SPAN = 7.2;
 	const bandLen = SPAN / BANDS;
 	const sweep = TAU / SEGS - 0.05;
 	for (let b = 0; b < BANDS; b++) {
@@ -251,11 +242,15 @@ export function buildMachine(): Machine {
 		root.add(bandG);
 		bands.push({ g: bandG, k: b % 2 ? -1 : 1 });
 		const L = bandLen / 2 - 0.03;
-		const base = lathe([[1.75, -L], [1.83, -L], [1.83, L], [1.75, L], [1.75, -L]], 6, 0, sweep);
+		const base = lathe([
+			                   [1.75, -L], [1.83, -L],
+			                   [1.83, L], [1.75, L], [1.75, -L]
+		                   ],
+		                   6, 0, sweep);
 		for (let j = 0; j < SEGS; j++) {
 			const mid = (j + 0.5) * (TAU / SEGS);
 			const rot = new THREE.Group();
-			rot.rotation.x = mid - sweep / 2; // lathe starts at phi = 0
+			rot.rotation.x = mid - sweep / 2;
 			rot.add(part(j === 0 ? base : base.clone(), LINE_STRONG, { fade: shellFade }));
 			const holder = new THREE.Group();
 			holder.add(rot);
@@ -265,7 +260,7 @@ export function buildMachine(): Machine {
 	}
 	
 	const setShellOpacity = (o: number) => {
-		const meshO = Math.min(1, Math.max(0, (o - 0.5) * 2)); // surfaces vanish first, leaving outlines
+		const meshO = Math.min(1, Math.max(0, (o - 0.5) * 2));
 		for (const { mesh, lines } of shellFade) {
 			lines.visible = o > 0.02;
 			(lines.material as THREE.LineBasicMaterial).opacity = o;

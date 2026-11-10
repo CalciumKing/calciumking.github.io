@@ -1,17 +1,13 @@
 import type { RefObject } from 'react';
 import { useEffect, useRef } from 'react';
 
-/**
- * Tracks scroll progress (0..1) through a tall "track" element whose first child is the sticky viewport.
- * Writes the value to a ref (for Three.js) and to the `--p` CSS variable on the track (for CSS).
- * Passive listener only; never touches scroll behavior.
- */
 export function useScrollProgress(trackRef: RefObject<HTMLElement>, enabled: boolean) {
 	const progress = useRef(0);
 	
 	useEffect(() => {
 		const track = trackRef.current;
-		if (!track || !enabled) return;
+		if (!track || !enabled)
+			return;
 		const sticky = track.firstElementChild as HTMLElement | null;
 		
 		const update = () => {

@@ -15,7 +15,6 @@
 	opacity: clamp(0, calc((0.17 - var(--dist)) / 0.07), 1);
 }
 
-/* Identity text also returns at the end of the track, so p = 1 looks exactly like p = 0 (the wrap is invisible). */
 .layerHero {
 	opacity: max(
 			clamp(0, calc((0.17 - var(--dist)) / 0.07), 1),
@@ -56,7 +55,6 @@
 	text-align: center;
 }
 
-/* ---------- Text ---------- */
 .panel {
 	width: 100%;
 	max-width: 26rem;
@@ -141,7 +139,6 @@
 	border-color: var(--color-line-strong);
 }
 
-/* ---------- Reduced motion: stacked blocks ---------- */
 .block {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -181,7 +178,6 @@
 	height: min(60vh, 28rem);
 }
 
-/* ---------- Mobile: text on top, machine on the bottom ---------- */
 @media (max-width: 800px) {
 	.layer,
 	.layerEnd {

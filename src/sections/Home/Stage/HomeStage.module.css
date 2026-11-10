@@ -32,7 +32,6 @@
 	);
 }
 
-/* Fade/slide layers: each sets --in (arrival) and --out (departure), both unclamped 0..1 ramps. */
 .computationLayer,
 .intelligenceLayer,
 .geometryLayer {
@@ -52,7 +51,6 @@
 	--out: calc((var(--q) - 1) / 0.1);
 }
 
-/* Geometry text arrives as the tesseract settles on the left, and leaves as it becomes the tree. */
 .geometryLayer {
 	--in: calc((var(--o) - 0.9) / 0.08);
 	--out: calc(var(--d) / 0.25);

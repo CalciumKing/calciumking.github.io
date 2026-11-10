@@ -23,7 +23,6 @@
 	--fade: clamp(0, min(calc((var(--d, 1) - 0.55) / 0.3), calc(1 - var(--r, 0) / 0.2)), 1);
 }
 
-/* --d is the directory progress (0..1) set on the stage track; it is 1 when static. */
 .label {
 	margin-bottom: 1.5rem;
 	font-size: 0.75rem;

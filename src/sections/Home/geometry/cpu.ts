@@ -7,15 +7,14 @@ export type CpuSegment = {
 	bright: boolean
 };
 
-const B = 1.7; // body half-size
-const C = 0.45; // corner chamfer
-const H = 0.45; // body height (z)
-const DIE = 1.0; // raised die half-size
-const DIE_H = 0.1; // die thickness
-const LEADS = 9; // leads per side
+const B = 1.7;
+const C = 0.45;
+const H = 0.45;
+const DIE = 1.0;
+const DIE_H = 0.1;
+const LEADS = 9;
 const LEAD_PITCH = 0.28;
 const LEAD_W = 0.16;
-// Gull-wing lead profile as [outward distance, z]
 const LEAD_PROFILE: [number, number][] = [
 	[0, 0.25],
 	[0.3, 0.25],
@@ -23,12 +22,11 @@ const LEAD_PROFILE: [number, number][] = [
 	[0.78, 0]
 ];
 
-/** QFP-style chip as technical linework (z = up). */
 export function buildCpuSegments(): CpuSegment[] {
 	const out: CpuSegment[] = [];
-	const seg = (a: Vec3, b: Vec3, bright: boolean) => out.push({ a, b, bright });
+	const seg
+		= (a: Vec3, b: Vec3, bright: boolean) => out.push({ a, b, bright });
 	
-	// Chamfered body: top and bottom outlines plus vertical edges
 	const oct: [number, number][] = [
 		[-B + C, -B], [B - C, -B], [B, -B + C], [B, B - C],
 		[B - C, B], [-B + C, B], [-B, B - C], [-B, -B + C]
@@ -47,13 +45,10 @@ export function buildCpuSegments(): CpuSegment[] {
 		seg([DIE, DIE, z], [-DIE, DIE, z], true);
 		seg([-DIE, DIE, z], [-DIE, -DIE, z], true);
 	}
-	for (const sx of [-1, 1]) {
-		for (const sy of [-1, 1]) {
+	for (const sx of [-1, 1])
+		for (const sy of [-1, 1])
 			seg([sx * DIE, sy * DIE, H], [sx * DIE, sy * DIE, H + DIE_H], true);
-		}
-	}
 	
-	// Gull-wing leads on all four sides
 	for (let side = 0; side < 4; side++) {
 		const ang = (side * Math.PI) / 2;
 		const nx = Math.round(Math.cos(ang));
@@ -84,7 +79,6 @@ export function buildCpuSegments(): CpuSegment[] {
 const length = (s: CpuSegment) =>
 	Math.hypot(s.b[0] - s.a[0], s.b[1] - s.a[1], s.b[2] - s.a[2]);
 
-/** Subdivides segments (proportional to length) so the result has exactly `count` segments. */
 export function resampleSegments<T extends CpuSegment>(src: T[], count: number): T[] {
 	const len = src.map(length);
 	const total = len.reduce((a, b) => a + b, 0);
@@ -113,7 +107,8 @@ export function resampleSegments<T extends CpuSegment>(src: T[], count: number):
 				best = i;
 			}
 		});
-		if (best < 0) break;
+		if (best < 0)
+			break;
 		n[best]--;
 		sum--;
 	}
@@ -121,9 +116,8 @@ export function resampleSegments<T extends CpuSegment>(src: T[], count: number):
 	const out: T[] = [];
 	src.forEach((s, i) => {
 		const c = n[i];
-		for (let k = 0; k < c; k++) {
+		for (let k = 0; k < c; k++)
 			out.push({ ...s, a: lerp3(s.a, s.b, k / c), b: lerp3(s.a, s.b, (k + 1) / c) });
-		}
 	});
 	return out;
 }

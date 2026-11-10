@@ -8,11 +8,13 @@ type Props = {
 	statement: string;
 	visualSide: 'left' | 'right';
 	className?: string;
-	visual?: ReactNode; // only supplied in reduced-motion mode
+	visual?: ReactNode;
 };
 
 export default function StatementSection({ id, label, title, statement, visualSide, className, visual }: Props) {
-	const cls = [styles.section, visualSide === 'left' && styles.visualLeft, className].filter(Boolean).join(' ');
+	const cls = [
+		styles.section, visualSide === 'left' && styles.visualLeft, className
+	].filter(Boolean).join(' ');
 	return (
 		<section className={ cls } aria-labelledby={ `${ id }-title` }>
 			<div className={ styles.inner }>

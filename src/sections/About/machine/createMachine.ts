@@ -13,10 +13,10 @@ export type MachineSceneOptions = {
 	};
 };
 
-const SPIN_RATE = 0.12; // rad/s, hero idle rotation
-const MOBILE_SHIFT_Y = -0.2; // machine sits in the lower part of the screen on mobile
+const SPIN_RATE = 0.12;
+const MOBILE_SHIFT_Y = -0.2;
 const PANEL_TRAVEL = 3.2;
-const IDLE_RATE = 0.4; // rad/s, part twist while running
+const IDLE_RATE = 0.4;
 
 export function createMachineScene(container: HTMLElement, options: MachineSceneOptions): SceneHandle {
 	const { reducedMotion, progress } = options;
@@ -51,32 +51,32 @@ export function createMachineScene(container: HTMLElement, options: MachineScene
 		last = now;
 		const pose = samplePose(progress.current);
 		
-		if (!reducedMotion) clock += dt;
+		if (!reducedMotion)
+			clock += dt;
 		
-		// Hero idle spin: when leaving the hero, ease to the nearest full turn so later poses start aligned.
 		let yaw: number;
-		if (reducedMotion) {
+		if (reducedMotion)
 			yaw = spin * pose.spin;
-		} else if (pose.spin >= 0.999) {
+		else if (pose.spin >= 0.999) {
 			lockTarget = null;
 			spin += dt * SPIN_RATE;
 			yaw = spin;
 		} else {
 			if (lockTarget === null) {
-				// Rest at the nearest multiple of a full turn: at most half a turn of easing.
 				spin = ((spin % TAU) + TAU) % TAU;
 				lockTarget = spin > Math.PI ? TAU : 0;
 			}
 			yaw = spin * pose.spin + lockTarget * (1 - pose.spin);
-			// Fully settled: start the next hero spin from the rest angle, so returning adds no extra rotation.
-			if (pose.spin < 0.001) spin = lockTarget;
+			if (pose.spin < 0.001)
+				spin = lockTarget;
 		}
 		
 		machine.root.rotation.y = yaw;
 		
 		const stretch = 1 + 0.55 * pose.explode + 0.45 * pose.open;
 		machine.stack.forEach(({ g, x }) => (g.position.x = x * stretch));
-		machine.spinners.forEach(({ g, k }) => (g.rotation.x = k * (pose.twist + clock * IDLE_RATE)));
+		machine.spinners.forEach(({ g, k }) =>
+			                         (g.rotation.x = k * (pose.twist + clock * IDLE_RATE)));
 		machine.spindle.scale.x = stretch;
 		machine.panels.forEach(({ g, dy, dz, k }) => {
 			const d = pose.panel * PANEL_TRAVEL * k;
@@ -84,7 +84,6 @@ export function createMachineScene(container: HTMLElement, options: MachineScene
 		});
 		machine.setShellOpacity(pose.shellOp);
 		
-		// Camera: distance is derived from the framing extents and how much of the screen the machine may use.
 		const fracW = compact ? 0.92 : 0.55;
 		const fracH = compact ? 0.45 : 0.75;
 		const dist = Math.max(pose.extH / (tanHalf * camera.aspect * fracW), pose.extV / (tanHalf * fracH));
@@ -105,14 +104,16 @@ export function createMachineScene(container: HTMLElement, options: MachineScene
 	let visible = true;
 	const tick = (now: number) => {
 		raf = 0;
-		if (!visible) return;
+		if (!visible)
+			return;
 		render(now);
 		raf = requestAnimationFrame(tick);
 	};
 	
 	const ro = new ResizeObserver(() => {
 		resize();
-		if (reducedMotion) render(performance.now());
+		if (reducedMotion)
+			render(performance.now());
 	});
 	ro.observe(container);
 	resize();
@@ -126,8 +127,10 @@ export function createMachineScene(container: HTMLElement, options: MachineScene
 	});
 	io.observe(container);
 	
-	if (reducedMotion) render(performance.now());
-	else raf = requestAnimationFrame(tick);
+	if (reducedMotion)
+		render(performance.now());
+	else
+		raf = requestAnimationFrame(tick);
 	
 	return {
 		dispose: () => {

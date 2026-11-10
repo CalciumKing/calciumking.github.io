@@ -4,7 +4,7 @@ import styles from './HeroSection.module.css';
 
 type SectionProps = {
 	className?: string;
-	visual?: ReactNode; // only supplied in reduced-motion mode
+	visual?: ReactNode;
 };
 
 export default function HeroSection({ className, visual }: SectionProps) {

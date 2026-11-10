@@ -24,7 +24,6 @@
 	border: 0;
 	background: none;
 	cursor: pointer;
-	/* Distance to this section's position, also measured around the loop (the Hero returns at p = 1). */
 	--dist: min(
 			max(var(--p, 0) - var(--c, 0), var(--c, 0) - var(--p, 0)),
 			max(var(--p, 0) - var(--c, 0) - 1, var(--c, 0) + 1 - var(--p, 0))
@@ -36,7 +35,6 @@
 	--k: clamp(0, var(--hero, 0), 1);
 }
 
-/* Non-looping rails: no wrap-around distance. */
 .flat .button {
 	--dist: max(var(--p, 0) - var(--c, 0), var(--c, 0) - var(--p, 0));
 }

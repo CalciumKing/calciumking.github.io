@@ -7,11 +7,6 @@ type TreeLine = {
 	len: number
 };
 
-/**
- * Reads the DOM tree's [data-tree-line] elements, converts them to group-local coordinates,
- * and deals the segments (in `treeOrder`) along them, writing into `toTree`.
- * Returns false if the tree can't be measured yet.
- */
 export function layoutTree(
 	container: HTMLElement,
 	root: HTMLElement | null | undefined,
@@ -22,7 +17,8 @@ export function layoutTree(
 	toTree: Float32Array
 ): boolean {
 	const box = container.getBoundingClientRect();
-	if (!root || box.width < 1 || box.height < 1) return false;
+	if (!root || box.width < 1 || box.height < 1)
+		return false;
 	
 	const toWorld = (x: number, y: number): Pt => [
 		(((x - box.left) / box.width - 0.5) * visW) / scale,
@@ -40,10 +36,11 @@ export function layoutTree(
 		lines.push({ a, b, len: Math.hypot(b[0] - a[0], b[1] - a[1]) });
 	});
 	const total = lines.reduce((sum, l) => sum + l.len, 0);
-	if (total <= 0) return false;
+	if (total <= 0)
+		return false;
 	
 	const count = treeOrder.length;
-	let start = 0; // length of all lines before line k
+	let start = 0;
 	let k = 0;
 	treeOrder.forEach((i, r) => {
 		const u0 = (r / count) * total;

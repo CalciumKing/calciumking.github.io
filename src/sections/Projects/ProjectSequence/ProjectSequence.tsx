@@ -11,8 +11,9 @@ import ProjectSlide from '../ProjectSlide/ProjectSlide';
 import styles from './ProjectSequence.module.css';
 
 const COUNT = PROJECTS.length;
-const PROJECTS_SHARE = 0.75; // share of the track used by the projects; the rest is the return phase
-const RAIL_SECTIONS = PROJECTS.map((p, i) => ({ label: p.name, at: (i / (COUNT - 1)) * PROJECTS_SHARE }));
+const PROJECTS_SHARE = 0.75;
+const RAIL_SECTIONS = PROJECTS.map((p, i) =>
+	                                   ({ label: p.name, at: (i / (COUNT - 1)) * PROJECTS_SHARE }));
 
 export default function ProjectSequence() {
 	const reducedMotion = useReducedMotion();
@@ -23,7 +24,6 @@ export default function ProjectSequence() {
 	const [active, setActive] = useState(0);
 	const [returning, setReturning] = useState(false);
 	
-	// Active index only gates focusability and scene mounting; the visuals are pure CSS on --p.
 	useEffect(() => {
 		if (stacked) return;
 		const update = () => {
@@ -34,7 +34,6 @@ export default function ProjectSequence() {
 			
 			const track = trackRef.current;
 			if (track) {
-				// Hero tick: lit while the track is still below the viewport, and again as the returning hero fades in.
 				const top = track.getBoundingClientRect().top;
 				const intro = Math.min(1, Math.max(0, top / (window.innerHeight * 0.5)));
 				const outro = Math.min(1, Math.max(0, (progress.current - 0.92) / 0.07));

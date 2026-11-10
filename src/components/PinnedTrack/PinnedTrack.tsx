@@ -3,7 +3,7 @@ import styles from './PinnedTrack.module.css';
 
 type Props = {
 	trackRef: RefObject<HTMLDivElement>;
-	height: string; // total scroll length, e.g. '1200svh'
+	height: string;
 	className?: string;
 	style?: CSSProperties;
 	children: ReactNode;

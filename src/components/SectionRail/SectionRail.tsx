@@ -18,8 +18,8 @@ type Props = {
 	trackRef: RefObject<HTMLElement>;
 	sections?: Section[];
 	loop?: boolean;
-	fixed?: boolean; // true: stays on the side of the viewport instead of the parent
-	leading?: string; // label for an extra first tick that scrolls to the top of the page
+	fixed?: boolean;
+	leading?: string;
 };
 
 export default function SectionRail({
@@ -31,7 +31,8 @@ export default function SectionRail({
                                     }: Props) {
 	const goTo = (at: number) => {
 		const track = trackRef.current;
-		if (!track) return;
+		if (!track)
+			return;
 		const sticky = track.firstElementChild as HTMLElement | null;
 		const range = track.offsetHeight - (sticky?.offsetHeight ?? window.innerHeight);
 		const top = track.getBoundingClientRect().top + window.scrollY + at * range;

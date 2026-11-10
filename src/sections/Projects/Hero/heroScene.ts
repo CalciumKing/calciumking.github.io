@@ -3,7 +3,6 @@ import type { SceneHandle, SceneOptions } from '../../../hooks/useThreeScene';
 import { clamp01, smooth } from '../../../lib/math';
 import { createRenderer } from '../../../lib/three/createRenderer';
 
-// Folder geometry
 const WIDTH = 3.6;
 const HEIGHT = 2.6;
 const TAB_WIDTH = 1.3;
@@ -11,18 +10,15 @@ const TAB_HEIGHT = 0.35;
 const TAB_SLANT = 0.25;
 const THICKNESS = 0.05;
 
-// Stack
 const COUNT = 6;
-const GAP = 0.8; // spacing between folders along the stack axis (local -z)
-const DRIFT_X = 0.35; // per-slot offset that makes the stack run diagonally
+const GAP = 0.8;
+const DRIFT_X = 0.35;
 const DRIFT_Y = 0.25;
-const LIFT = 3.2; // must exceed the folder height (HEIGHT + TAB_HEIGHT ≈ 2.95) so the front folder clears the stack
+const LIFT = 3.2;
 
-// Motion
-const PERIOD = 3; // seconds per cycle
-const EPOCH = performance.now(); // shared by every instance, so all heroes show the same pose
+const PERIOD = 3;
+const EPOCH = performance.now();
 
-// Colors mirror tokens.css (--color-line, --color-line-strong)
 const NEAR = new THREE.Color(0xf2f2f2);
 const FAR = new THREE.Color(0x4a4a4a);
 
@@ -52,7 +48,6 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
 	solid.translate(0, 0, -THICKNESS / 2);
 	const edges = new THREE.EdgesGeometry(solid, 20);
 	
-	// Black surface hides the folders behind it; the offset keeps the outline on top of it.
 	const fill = new THREE.MeshBasicMaterial({
 		                                         color: 0x050505,
 		                                         polygonOffset: true,
@@ -74,7 +69,6 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
 		folders.push({ group, line });
 	}
 	
-	// Centre the stack on screen, then turn it so it recedes diagonally.
 	const mid = (COUNT - 1) / 2;
 	const frame = new THREE.Group();
 	stack.position.set(-DRIFT_X * mid, -DRIFT_Y * mid, GAP * mid);
@@ -85,9 +79,9 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
 	const applyPose = (time: number) => {
 		const cycle = Math.floor(time / PERIOD);
 		const u = (time / PERIOD) % 1;
-		const up = smooth(clamp01(u / 0.25)); // 0 → 0.25: lift straight up
-		const back = smooth(clamp01((u - 0.25) / 0.5)); // 0.25 → 0.75: travel straight back; the others advance
-		const down = smooth(clamp01((u - 0.75) / 0.25)); // 0.75 → 1: lower straight down
+		const up = smooth(clamp01(u / 0.25));
+		const back = smooth(clamp01((u - 0.25) / 0.5));
+		const down = smooth(clamp01((u - 0.75) / 0.25));
 		folders.forEach(({ group, line }, f) => {
 			const rank = (((f - cycle) % COUNT) + COUNT) % COUNT;
 			const front = rank === 0;
@@ -121,7 +115,8 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
 	};
 	
 	const start = () => {
-		if (running) return;
+		if (running)
+			return;
 		running = true;
 		raf = requestAnimationFrame(tick);
 	};
@@ -140,8 +135,10 @@ export function createProjectsHeroScene(container: HTMLElement, { reducedMotion 
 	let intersectionObserver: IntersectionObserver | null = null;
 	if (!reducedMotion) {
 		intersectionObserver = new IntersectionObserver((entries) => {
-			if (entries[0]?.isIntersecting) start();
-			else stop();
+			if (entries[0]?.isIntersecting)
+				start();
+			else
+				stop();
 		});
 		intersectionObserver.observe(container);
 	}

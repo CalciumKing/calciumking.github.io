@@ -1,22 +1,21 @@
 import { lerp, smooth } from '../../../lib/math';
 
-/** One full machine + camera state. Everything the scene needs is sampled from this at a scroll progress. */
 export type Pose = {
-	panel: number; // 0..1 shell panels fly out radially
-	explode: number; // 0..1 stack stretches along x
-	open: number; // 0..1 stack stretches further, exposing the core
-	twist: number; // rad, twisting parts rotate about the axis
-	shellOp: number; // panel opacity (outline ghosting below ~0.5)
-	spin: number; // 1 = idle auto-rotation (hero), 0 = fixed yaw
-	az: number; // camera azimuth (rad)
-	el: number; // camera elevation (rad)
-	extH: number; // half-width the framing must fit
-	extV: number; // half-height the framing must fit
+	panel: number;
+	explode: number;
+	open: number;
+	twist: number;
+	shellOp: number;
+	spin: number;
+	az: number;
+	el: number;
+	extH: number;
+	extV: number;
 	tx: number;
 	ty: number;
 	tz: number;
-	shiftX: number; // desktop: machine offset as a fraction of viewport width (+ = right)
-	shiftY: number; // desktop: fraction of viewport height (+ = up)
+	shiftX: number;
+	shiftY: number;
 };
 
 const BASE: Pose = {
@@ -41,7 +40,6 @@ const CONCLUSION: Pose = {
 	...BASE, twist: 0, shellOp: 0.25, az: 0.5, el: 0.3, extH: 3.8, extV: 2.4, shiftY: 0.12
 };
 
-/** Pose stops by scroll progress. Pairs of equal poses are the "hold" zones around each phase. */
 const STOPS: {
 	at: number;
 	pose: Pose
@@ -62,14 +60,16 @@ const STOPS: {
 const KEYS = Object.keys(BASE) as (keyof Pose)[];
 
 export function samplePose(p: number): Pose {
-	if (p <= STOPS[0].at) return STOPS[0].pose;
+	if (p <= STOPS[0].at)
+		return STOPS[0].pose;
 	for (let i = 1; i < STOPS.length; i++) {
 		if (p <= STOPS[i].at) {
 			const a = STOPS[i - 1];
 			const b = STOPS[i];
 			const t = smooth((p - a.at) / (b.at - a.at));
 			const out = { ...a.pose };
-			for (const k of KEYS) out[k] = lerp(a.pose[k], b.pose[k], t);
+			for (const k of KEYS)
+				out[k] = lerp(a.pose[k], b.pose[k], t);
 			return out;
 		}
 	}

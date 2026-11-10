@@ -22,12 +22,6 @@
 	list-style: none;
 }
 
-/*
- * d = this item's distance from the foreground, in projects (0 = active).
- *   ahead: 0..1  waiting behind the active item
- *   far:   0..1  fading out beyond the next item
- *   past:  0..1  receding upward after being active
- */
 .item {
 	--d: calc(var(--i) - var(--s) * (var(--n) - 1) - var(--r));
 	--ahead: clamp(0, var(--d), 1);
@@ -36,7 +30,7 @@
 	
 	position: absolute;
 	inset: 0;
-	z-index: calc(var(--n) - var(--i)); /* earlier projects sit above later ones */
+	z-index: calc(var(--n) - var(--i));
 	pointer-events: none;
 	transform-origin: 50% 40%;
 	opacity: calc(1 - 0.6 * var(--ahead) - 0.4 * var(--far) - var(--past));
@@ -50,7 +44,6 @@
 	visibility: hidden;
 }
 
-/* Stacked layout: reduced motion or narrow screens. */
 .stacked {
 	max-width: var(--max-width);
 	margin: 0 auto;
