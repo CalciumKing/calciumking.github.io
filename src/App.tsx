@@ -6,6 +6,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
+import Resume from './pages/Resume';
 
 export default function App() {
 	return (
@@ -18,6 +19,7 @@ export default function App() {
 					<Route path="/" element={ <Home/> }/>
 					<Route path="/projects" element={ <Projects/> }/>
 					<Route path="/about" element={ <About/> }/>
+					<Route path="/resume" element={ <Resume/> }/>
 					<Route path="/contact" element={ <Contact/> }/>
 					<Route path="*" element={ <Navigate to="/" replace/> }/>
 				</Routes>
