@@ -146,7 +146,9 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 		}
 		for (let j = 0; j < lons; j++) {
 			const th = (j * Math.PI) / lons;
-			const p = (a: number) => v3(r * Math.sin(a) * Math.cos(th), r * Math.cos(a), r * Math.sin(a) * Math.sin(th));
+			const p = (a: number) => v3(r * Math.sin(a) * Math.cos(th),
+			                            r * Math.cos(a),
+			                            r * Math.sin(a) * Math.sin(th));
 			for (let k = 0; k < N; k++)
 				pairs.push([p((k / N) * TAU), p(((k + 1) / N) * TAU)]);
 		}
@@ -259,7 +261,10 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 			const pairs: Pair[] = [];
 			for (let i = 0; i < 36; i++) {
 				const a = (i / 36) * TAU;
-				pairs.push([v3(2.1 * Math.cos(a), -0.14, 2.1 * Math.sin(a)), v3(2.1 * Math.cos(a), 0.14, 2.1 * Math.sin(a))]);
+				pairs.push([
+					           v3(2.1 * Math.cos(a), -0.14, 2.1 * Math.sin(a)),
+					           v3(2.1 * Math.cos(a), 0.14, 2.1 * Math.sin(a))
+				           ]);
 			}
 			b.add(segments(pairs, LINE));
 			g.add(tilted(b, -0.35, 0.2));
@@ -276,9 +281,19 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 	};
 	
 	const root = new THREE.Group();
-	const orbiters: { pivot: THREE.Group; a0: number; w: number }[] = [];
-	const spinners: { g: THREE.Group; w: number }[] = [];
-	const belts: { g: THREE.Object3D; w: number }[] = [];
+	const orbiters: {
+		pivot: THREE.Group;
+		a0: number;
+		w: number
+	}[] = [];
+	const spinners: {
+		g: THREE.Group;
+		w: number
+	}[] = [];
+	const belts: {
+		g: THREE.Object3D;
+		w: number
+	}[] = [];
 	
 	// Circular lane with a pyramid ship; pivot.rotation.y drives the orbit
 	const lane = (parent: THREE.Object3D, r: number, a0: number, w: number, s: number, tx: number, tz: number) => {

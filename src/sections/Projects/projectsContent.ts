@@ -38,7 +38,8 @@ export const PROJECTS: Project[] = [
 		description: 'This personal developer portfolio website, featuring interactive 3D wireframe visuals and a scroll-driven experiences.',
 		role: 'Full-Stack Solo Developer',
 		technologies: ['React', 'TypeScript', 'Vite', 'Three.js'],
-		githubUrl: 'https://github.com/CalciumKing/calciumking.github.io'
+		githubUrl: 'https://github.com/CalciumKing/calciumking.github.io',
+		liveUrl: 'https://cloud.umami.is/share/iTT3nl1TAv5GZasa'
 	},
 	{
 		id: 'heimdall',

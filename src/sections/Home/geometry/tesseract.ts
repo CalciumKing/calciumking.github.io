@@ -1,5 +1,5 @@
 export type Vec4 = [number, number, number, number];
-export type Mat4 = number[]; // row-major 4×4
+export type Mat4 = number[];
 
 export type Plane = 'xy' | 'xz' | 'xw' | 'yz' | 'yw' | 'zw';
 export type Angles = Partial<Record<Plane, number>>;

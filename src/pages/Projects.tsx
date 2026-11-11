@@ -5,7 +5,7 @@ import ProjectsHero from '../sections/Projects/Hero/ProjectsHero';
 import ProjectSequence from '../sections/Projects/ProjectSequence/ProjectSequence';
 
 export default function Projects() {
-	const narrow = useMediaQuery(MOBILE_QUERY); // stacked layout has no matching end state
+	const narrow = useMediaQuery(MOBILE_QUERY);
 	usePage('Projects', !narrow);
 	return (
 		<>

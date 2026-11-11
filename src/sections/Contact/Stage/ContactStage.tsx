@@ -184,7 +184,7 @@ export default function ContactStage() {
 					styles.layer,
 					stop.kind === 'final' && styles.layerEnd,
 					i === active && styles.active,
-					stop.kind === 'intro' && styles.layerIntro,
+					stop.kind === 'intro' && styles.layerIntro
 				]
 					.filter(Boolean)
 					.join(' ');
@@ -198,7 +198,11 @@ export default function ContactStage() {
 					</div>
 				);
 			}) }
-			<div className={ styles.footerSlot } style={ { '--flo': FINAL_AT - STEP * 0.25, '--fhi': FINAL_AT + STEP * 0.25, '--ff': STEP * 0.12 } as CSSProperties }>
+			<div className={ styles.footerSlot } style={ {
+				'--flo': FINAL_AT - STEP * 0.25,
+				'--fhi': FINAL_AT + STEP * 0.25,
+				'--ff': STEP * 0.12
+			} as CSSProperties }>
 				<Footer/>
 			</div>
 			<SectionRail trackRef={ trackRef } sections={ RAIL }/>

@@ -12,7 +12,10 @@ export type Sample = {
 	shiftY: number;
 };
 
-type Shift = { x: number; y: number };
+type Shift = {
+	x: number;
+	y: number
+};
 
 // Stops: [overview, ...planets (live, follow orbit), final]
 export function createRig(system: ContactSystem, shifts: Shift[], tanHalf: number) {
@@ -53,7 +56,8 @@ export function createRig(system: ContactSystem, shifts: Shift[], tanHalf: numbe
 		frames[m].pos.copy(dirOf(-0.5, 0.55)).multiplyScalar(dist(e * 0.8, e * 0.45, c ? 0.98 : 0.9, c ? 0.35 : 0.62));
 		
 		frames[last].target.set(0, 0, 0);
-		frames[last].pos.copy(dirOf(-0.5, 0.55)).multiplyScalar(dist(e * 0.8, e * 0.45, c ? 0.98 : 0.9, c ? 0.35 : 0.62));
+		frames[last].pos.copy(dirOf(-0.5, 0.55))
+		            .multiplyScalar(dist(e * 0.8, e * 0.45, c ? 0.98 : 0.9, c ? 0.35 : 0.62));
 		
 		frames[m].pos.copy(frames[0].pos);
 		frames[m].target.copy(frames[0].target);

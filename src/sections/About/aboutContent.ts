@@ -47,7 +47,7 @@ export const PHASES: Phase[] = [
 		at: 0.52,
 		side: 'left',
 		eyebrow: '// FOUNDATION',
-		heading: 'Technical foundation',
+		heading: 'Technical Foundation',
 		groups: [
 			{ label: 'Languages', items: ['Kotlin', 'Java', 'Python', 'TypeScript'] },
 			{ label: 'Frameworks', items: ['Java Swing', 'PyQt', 'Three.js'] },
@@ -74,7 +74,7 @@ export const PHASES: Phase[] = [
 		at: 0.86,
 		side: 'center',
 		eyebrow: '// NEXT',
-		heading: 'See the work',
+		heading: 'See The Work',
 		body: 'Selected projects, or get in touch.',
 		links: [
 			{ label: 'PROJECTS', to: '/projects' },

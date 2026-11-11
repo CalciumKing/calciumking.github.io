@@ -38,7 +38,6 @@ export function buildCpuSegments(): CpuSegment[] {
 		seg([x, y, 0], [x, y, H], true);
 	});
 	
-	// Raised die on top
 	for (const z of [H, H + DIE_H]) {
 		seg([-DIE, -DIE, z], [DIE, -DIE, z], true);
 		seg([DIE, -DIE, z], [DIE, DIE, z], true);
@@ -63,7 +62,7 @@ export function buildCpuSegments(): CpuSegment[] {
 		for (let i = 0; i < LEADS; i++) {
 			const t = (i - (LEADS - 1) / 2) * LEAD_PITCH;
 			LEAD_PROFILE.forEach(([d, z], k) => {
-				seg(pt(d, t - LEAD_W / 2, z), pt(d, t + LEAD_W / 2, z), false); // rung
+				seg(pt(d, t - LEAD_W / 2, z), pt(d, t + LEAD_W / 2, z), false);
 				if (k > 0) {
 					const [pd, pz] = LEAD_PROFILE[k - 1];
 					seg(pt(pd, t - LEAD_W / 2, pz), pt(d, t - LEAD_W / 2, z), false);

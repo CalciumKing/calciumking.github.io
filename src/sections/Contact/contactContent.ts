@@ -15,7 +15,7 @@ export const CONTACTS: Contact[] = [
 	{
 		id: 'email',
 		label: 'EMAIL',
-		heading: 'Primary contact',
+		heading: 'Primary Contact',
 		display: 'lkingerslev@gmail.com',
 		href: 'mailto:lkingerslev@gmail.com',
 		external: false,
@@ -34,7 +34,7 @@ export const CONTACTS: Contact[] = [
 	{
 		id: 'linkedin',
 		label: 'LINKEDIN',
-		heading: 'Professional profile',
+		heading: 'Professional Profile',
 		display: 'linkedin.com/in/landen-ingerslev',
 		href: 'https://www.linkedin.com/in/landen-ingerslev',
 		external: true,
@@ -43,7 +43,7 @@ export const CONTACTS: Contact[] = [
 	{
 		id: 'discord',
 		label: 'DISCORD',
-		heading: 'Direct message',
+		heading: 'Direct Message',
 		display: 'calcium_king on Discord',
 		href: 'https://discordapp.com/users/541352538910359563',
 		external: true,
@@ -52,7 +52,7 @@ export const CONTACTS: Contact[] = [
 	{
 		id: 'spotify',
 		label: 'SPOTIFY',
-		heading: 'Music profile',
+		heading: 'Music Profile',
 		display: 'CalciumKing on Spotify',
 		href: 'https://open.spotify.com/user/31g5myjpi3aesuarmxy67vrybvwi?si=92ccbab32ccd4cba',
 		external: true,
@@ -62,7 +62,7 @@ export const CONTACTS: Contact[] = [
 
 export const INTRO = {
 	eyebrow: '/Contact',
-	heading: 'Get in touch',
+	heading: 'Get In Touch',
 	body: 'Email is the primary channel. Other destinations follow along the system.'
 };
 

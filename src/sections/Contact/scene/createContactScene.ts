@@ -8,8 +8,13 @@ import { buildSystem } from './parts';
 
 export type ContactSceneOptions = {
 	reducedMotion: boolean;
-	progress: { current: number };
-	shifts: { x: number; y: number }[];
+	progress: {
+		current: number
+	};
+	shifts: {
+		x: number;
+		y: number
+	}[];
 };
 
 const MOBILE_SHIFT_Y = -0.2;
