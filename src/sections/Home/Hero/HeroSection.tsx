@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import ScrollHint from '../../../components/ScrollHint/ScrollHint';
+import { useContent } from '../../../i18n/content';
+import { homeContent } from '../homeContent';
 import styles from './HeroSection.module.css';
 
 type SectionProps = {
@@ -8,6 +10,8 @@ type SectionProps = {
 };
 
 export default function HeroSection({ className, visual }: SectionProps) {
+	const c = useContent(homeContent).hero;
+	
 	return (
 		<section
 			className={ className ? `${ styles.hero } ${ className }` : styles.hero }
@@ -15,12 +19,12 @@ export default function HeroSection({ className, visual }: SectionProps) {
 		>
 			<div className={ styles.inner }>
 				<div className={ styles.content }>
-					<p className={ styles.role }>// SOFTWARE ENGINEER</p>
+					<p className={ styles.role }>{ c.role }</p>
 					<h1 id="hero-title" className={ styles.name }>
-						<span>Landen</span> <span>Ingerslev</span>
+						<span>{ c.first }</span> <span>{ c.last }</span>
 					</h1>
 					<p className={ styles.statement }>
-						Working across disciplines. Driven by curiosity. Focused on building things that matter.
+						{ c.statement }
 					</p>
 				</div>
 				

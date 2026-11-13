@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useEffect, useRef, useState, useMemo } from 'react';
 import Footer from '../../../components/Footer/Footer';
 import SectionRail from '../../../components/SectionRail/SectionRail';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
@@ -6,14 +6,12 @@ import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
 import { MOBILE_QUERY } from '../../../lib/layout';
 import ProjectsHero from '../Hero/ProjectsHero';
-import { PROJECTS } from '../projectsContent';
+import { PROJECT_COUNT, useProjects, useProjectsUi } from '../projectsContent';
 import ProjectSlide from '../ProjectSlide/ProjectSlide';
 import styles from './ProjectSequence.module.css';
 
-const COUNT = PROJECTS.length;
+const COUNT = PROJECT_COUNT;
 const PROJECTS_SHARE = 0.75;
-const RAIL_SECTIONS = PROJECTS.map((p, i) =>
-	                                   ({ label: p.name, at: (i / (COUNT - 1)) * PROJECTS_SHARE }));
 
 export default function ProjectSequence() {
 	const reducedMotion = useReducedMotion();
@@ -23,6 +21,13 @@ export default function ProjectSequence() {
 	const progress = useScrollProgress(trackRef, !stacked);
 	const [active, setActive] = useState(0);
 	const [returning, setReturning] = useState(false);
+	
+	const PROJECTS = useProjects();
+	const ui = useProjectsUi();
+	const railSections = useMemo(
+		() => PROJECTS.map((p, i) => ({ label: p.name, at: (i / (COUNT - 1)) * PROJECTS_SHARE })),
+		[PROJECTS]
+	);
 	
 	useEffect(() => {
 		if (stacked) return;
@@ -52,7 +57,7 @@ export default function ProjectSequence() {
 	if (stacked) {
 		return (
 			<>
-				<section className={ styles.stacked } aria-label="Selected projects">
+				<section className={ styles.stacked } aria-label={ui.selected}>
 					<ol className={ styles.list }>
 						{ PROJECTS.map((project) => (
 							<li key={ project.id }>
@@ -71,7 +76,7 @@ export default function ProjectSequence() {
 			ref={ trackRef }
 			className={ styles.track }
 			style={ { '--n': COUNT, '--share': PROJECTS_SHARE } as CSSProperties }
-			aria-label="Selected projects"
+			aria-label={ui.selected}
 		>
 			<div className={ styles.sticky }>
 				<ol className={ styles.stage }>
@@ -99,7 +104,7 @@ export default function ProjectSequence() {
 					<Footer/>
 				</div>
 			</div>
-			<SectionRail trackRef={ trackRef } sections={ RAIL_SECTIONS } loop={ false } fixed leading="Projects"/>
+			<SectionRail trackRef={ trackRef } sections={ railSections } loop={ false } fixed leading={ui.leading}/>
 		</section>
 	);
 }

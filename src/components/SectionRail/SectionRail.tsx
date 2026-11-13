@@ -1,4 +1,6 @@
 import type { CSSProperties, RefObject } from 'react';
+import { common } from '../../i18n/common';
+import { useContent } from '../../i18n/content';
 import styles from './SectionRail.module.css';
 
 type Section = {
@@ -6,17 +8,9 @@ type Section = {
 	at: number
 };
 
-const HOME_SECTIONS: Section[] = [
-	{ label: 'Hero', at: 0 },
-	{ label: 'Computation', at: 0.153 },
-	{ label: 'Intelligence', at: 0.375 },
-	{ label: 'Geometry', at: 0.55 },
-	{ label: 'Directory', at: 0.72 }
-];
-
 type Props = {
 	trackRef: RefObject<HTMLElement>;
-	sections?: Section[];
+	sections: Section[];
 	loop?: boolean;
 	fixed?: boolean;
 	leading?: string;
@@ -24,11 +18,12 @@ type Props = {
 
 export default function SectionRail({
 	                                    trackRef,
-	                                    sections = HOME_SECTIONS,
+	                                    sections,
 	                                    loop = true,
 	                                    fixed = false,
 	                                    leading
                                     }: Props) {
+	const c = useContent(common);
 	const goTo = (at: number) => {
 		const track = trackRef.current;
 		if (!track)
@@ -42,7 +37,7 @@ export default function SectionRail({
 	return (
 		<nav
 			className={ [styles.rail, !loop && styles.flat, fixed && styles.fixed].filter(Boolean).join(' ') }
-			aria-label="Page sections"
+			aria-label={ c.pageSections }
 		>
 			<ul className={ styles.list }>
 				{ leading && (

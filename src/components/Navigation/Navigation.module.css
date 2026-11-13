@@ -63,5 +63,6 @@
 	.link {
 		font-size: 0.6875rem;
 		letter-spacing: 0.1em;
+		flex-wrap: wrap;
 	}
 }

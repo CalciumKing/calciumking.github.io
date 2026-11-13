@@ -47,8 +47,8 @@ const SHAPES = [
 
 const WINDOWS = [v3(0.8, 0.3, 0.5).normalize(), v3(-0.6, -0.5, 0.6).normalize()];
 
-const PLANET_SPIN = [0.12, -0.07, 0.18, 0.05, -0.14, 0.09]; // rad/s, one per planet
-const ACCESSORY_SPIN = [-0.05, 0.1, -0.03, 0.15, 0.06, -0.11];
+const PLANET_SPIN = [0.12, -0.07, 0.18, 0.07, -0.14, 0.09];
+const ACCESSORY_SPIN = [-0.05, 0.1, -0.15, 0.15, 0.2, -0.11];
 
 export function buildSystem(kinds: BodyKind[]): ContactSystem {
 	const geometries = new Set<THREE.BufferGeometry>();
@@ -118,7 +118,6 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 		return segments(pairs, LINE_DIM);
 	};
 	
-	// Two concentric loops joined by radial struts (manmade belt)
 	const band = (r1: number, r2: number, count: number, color = LINE_STRONG) => {
 		const g = new THREE.Group();
 		g.add(loop(r1, color), loop(r2, LINE));
@@ -170,7 +169,6 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 		return grp;
 	};
 	
-	// Icosphere shell with two windows cut out (partial Dyson sphere)
 	const openShell = (r: number, detail: number, cut = true) => {
 		const src = new THREE.IcosahedronGeometry(r, detail);
 		const p = src.getAttribute('position');
@@ -205,7 +203,7 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 	
 	const ship = (s: number) => {
 		const g = new THREE.ConeGeometry(0.28 * s, 0.9 * s, 4);
-		g.rotateZ(-Math.PI / 2); // apex points +x
+		g.rotateZ(-Math.PI / 2);
 		return part(g, LINE_STRONG);
 	};
 	
@@ -295,7 +293,6 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 		w: number
 	}[] = [];
 	
-	// Circular lane with a pyramid ship; pivot.rotation.y drives the orbit
 	const lane = (parent: THREE.Object3D, r: number, a0: number, w: number, s: number, tx: number, tz: number) => {
 		const holder = new THREE.Group();
 		holder.rotation.set(tx, 0, tz);
@@ -309,7 +306,6 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 		orbiters.push({ pivot, a0, w });
 	};
 	
-	// Sun: graticule core, Dyson shell, collector rings
 	const sunCore = planet(SUN_R, 14, 16);
 	const sunShell = new THREE.Group();
 	sunShell.add(wire(openShell(SHELL_R, 2, false), LINE));
@@ -332,10 +328,8 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 		const carrier = new THREE.Group();
 		carrier.position.x = r;
 		const visual = BUILD[kind]();
-		// Every builder adds the planet first and its accessory second
 		const body = visual.children[0] as THREE.Group;
 		const acc = visual.children[1] as THREE.Group;
-		// Move the accessory's tilt onto a wrapper so it can spin on its own tilted axis
 		const tiltWrap = new THREE.Group();
 		tiltWrap.rotation.copy(acc.rotation);
 		acc.rotation.set(0, 0, 0);
@@ -359,7 +353,6 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 		extents.push(ext);
 	});
 	
-	// Traffic lanes between the planet orbits
 	const rand = rng(7);
 	for (let k = 0; k <= kinds.length; k++) {
 		const r = R0 - 4.5 + DR * k;
@@ -368,7 +361,6 @@ export function buildSystem(kinds: BodyKind[]): ContactSystem {
 			     (rand() - 0.5) * 0.3, (rand() - 0.5) * 0.3);
 	}
 	
-	// Asteroid belts
 	const n = kinds.length;
 	if (n >= 3) {
 		const b = asteroidBelt(R0 + DR * 1.5, 5, 240, 3);

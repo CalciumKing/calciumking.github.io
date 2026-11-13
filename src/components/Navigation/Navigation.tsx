@@ -1,14 +1,11 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { common } from '../../i18n/common';
+import { useContent } from '../../i18n/content';
+import LanguageToggle from '../LanguageToggle/LanguageToggle';
 import styles from './Navigation.module.css';
 
-const LINKS = [
-	{ label: '/ABOUT', to: '/about' },
-	{ label: '/PROJECTS', to: '/projects' },
-	{ label: '/RESUME', to: '/resume' },
-	{ label: '/CONTACT', to: '/contact' }
-];
-
 export default function Navigation() {
+	const c = useContent(common);
 	const { pathname } = useLocation();
 	const toTop = (to: string) => (e: React.MouseEvent) => {
 		if (pathname === to) {
@@ -19,12 +16,12 @@ export default function Navigation() {
 	
 	return (
 		<header className={ styles.header }>
-			<nav className={ styles.nav } aria-label="Primary">
+			<nav className={ styles.nav } aria-label={ c.navLabel }>
 				<Link to="/" onClick={ toTop('/') } className={ styles.brand }>
 					~/CalciumKing
 				</Link>
 				<ul className={ styles.links }>
-					{ LINKS.map(({ label, to }) => (
+					{ c.links.map(({ label, to }) => (
 						<li key={ to } className={ styles.item }>
 							<NavLink
 								to={ to }
@@ -37,6 +34,7 @@ export default function Navigation() {
 							</NavLink>
 						</li>
 					)) }
+					<li className={ styles.item }><LanguageToggle/></li>
 				</ul>
 			</nav>
 		</header>

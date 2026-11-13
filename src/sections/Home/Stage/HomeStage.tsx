@@ -1,4 +1,4 @@
-import { CSSProperties, type RefObject, useCallback, useRef } from 'react';
+import { CSSProperties, type RefObject, useCallback, useMemo, useRef } from 'react';
 import Footer from '../../../components/Footer/Footer';
 import PinnedTrack from '../../../components/PinnedTrack/PinnedTrack';
 import SectionRail from '../../../components/SectionRail/SectionRail';
@@ -7,9 +7,11 @@ import { useProgressRange } from '../../../hooks/useProgressRange';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
 import type { SceneFactory } from '../../../hooks/useThreeScene';
+import { useContent } from '../../../i18n/content';
 import DirectorySection from '../Directory/DirectorySection';
 import HeroSection from '../Hero/HeroSection';
-import { SECTIONS } from '../StatementSection/Sections';
+import { homeContent } from '../homeContent';
+import { useSections } from '../StatementSection/Sections';
 import StatementSection from '../StatementSection/StatementSection';
 import styles from './HomeStage.module.css';
 import { DIR_END, OLD_SHARE } from './phases';
@@ -49,6 +51,12 @@ export default function HomeStage() {
 	const treeRef = useRef<HTMLDivElement>(null);
 	const progress = useScrollProgress(trackRef, !reducedMotion);
 	const directoryActive = useProgressRange(progress, 0.65, 0.8, !reducedMotion);
+	const SECTIONS = useSections();
+	const railLabels = useContent(homeContent).rail;
+	const rail = useMemo(
+		() => [0, 0.153, 0.375, 0.55, 0.72].map((at, i) => ({ label: railLabels[i], at })),
+		[railLabels]
+	);
 	
 	if (reducedMotion) {
 		return (
@@ -104,7 +112,7 @@ export default function HomeStage() {
 					<Footer/>
 				</div>
 			</div>
-			<SectionRail trackRef={ trackRef }/>
+			<SectionRail trackRef={ trackRef } sections={ rail }/>
 		</PinnedTrack>
 	);
 }

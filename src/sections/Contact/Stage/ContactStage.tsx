@@ -1,4 +1,4 @@
-import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import Footer from '../../../components/Footer/Footer';
 import PinnedTrack from '../../../components/PinnedTrack/PinnedTrack';
 import ScrollHint from '../../../components/ScrollHint/ScrollHint';
@@ -7,7 +7,7 @@ import ThreeCanvas from '../../../components/ThreeCanvas/ThreeCanvas';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
 import type { SceneFactory } from '../../../hooks/useThreeScene';
-import { type Contact, CONTACTS, FINAL, INTRO } from '../contactContent';
+import { type Contact, CONTACT_COUNT, useContactContent } from '../contactContent';
 import { createContactScene } from '../scene/createContactScene';
 import styles from './ContactStage.module.css';
 import CopyButton from './CopyButton';
@@ -24,36 +24,42 @@ type Stop = {
 	contact?: Contact;
 };
 
-const COUNT = CONTACTS.length;
+const COUNT = CONTACT_COUNT;
 const STEP = 1 / (COUNT + 2);
 const FINAL_AT = (COUNT + 1) * STEP;
 
-const STOPS: Stop[] = [
-	{ id: 'intro', label: 'System', side: 'left', kind: 'intro' },
-	...CONTACTS.map((c, i): Stop => ({
-		id: c.id,
-		label: c.label,
-		side: i % 2 === 0 ? 'right' : 'left',
-		kind: 'contact',
-		contact: c
-	})),
-	{ id: 'final', label: 'Contact', side: 'center', kind: 'final' }
+const SIDES: Side[] = [
+	'left',
+	...Array.from({ length: COUNT }, (_, i): Side => (i % 2 === 0 ? 'right' : 'left')),
+	'center'
 ];
-
-const SHIFTS = STOPS.map((s) => ({
-	x: s.side === 'right' ? -0.22 : s.side === 'left' ? 0.22 : 0,
-	y: s.side === 'center' ? 0.12 : 0
+const SHIFTS = SIDES.map((s) => ({
+	x: s === 'right' ? -0.22 : s === 'left' ? 0.22 : 0,
+	y: s === 'center' ? 0.12 : 0
 }));
-const RAIL = STOPS.map((s, i) =>
-	                       ({ label: s.label, at: i * STEP }));
 const STATIC: Progress = { current: 0 };
+
+
+function useStops() {
+	const { contacts, ui } = useContactContent();
+	return useMemo(() => {
+		const stops: Stop[] = [
+			{ id: 'intro', label: ui.stopSystem, side: SIDES[0], kind: 'intro' },
+			...contacts.map((c, i): Stop => ({
+				id: c.id, label: c.label, side: SIDES[i + 1], kind: 'contact', contact: c
+			})),
+			{ id: 'final', label: ui.stopContact, side: SIDES[COUNT + 1], kind: 'final' }
+		];
+		return { stops, rail: stops.map((s, i) => ({ label: s.label, at: i * STEP })) };
+	}, [contacts, ui]);
+}
 
 function useActiveStop(progress: Progress, enabled: boolean) {
 	const [active, setActive] = useState(0);
 	useEffect(() => {
 		if (!enabled)
 			return;
-		const update = () => setActive(Math.round(progress.current / STEP) % STOPS.length);
+		const update = () => setActive(Math.round(progress.current / STEP) % (COUNT + 2));
 		update();
 		window.addEventListener('scroll', update, { passive: true });
 		window.addEventListener('resize', update);
@@ -82,6 +88,7 @@ function Actions({ contact, interactive }: {
 	contact: Contact;
 	interactive: boolean
 }) {
+	const { ui } = useContactContent();
 	const tab = interactive ? 0 : -1;
 	return (
 		<>
@@ -89,10 +96,10 @@ function Actions({ contact, interactive }: {
 				className={ styles.link }
 				href={ contact.href }
 				tabIndex={ tab }
-				aria-label={ contact.external ? `Open ${ contact.label } (new tab)` : `Email ${ contact.display }` }
+				aria-label={ contact.external ? ui.ariaOpen(contact.label) : ui.ariaMail(contact.display) }
 				{ ...(contact.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
 			>
-				{ contact.external ? 'OPEN ↗' : 'MAIL →' }
+				{ contact.external ? ui.open : ui.mail }
 			</a>
 			{ contact.copy && <CopyButton value={ contact.copy } className={ styles.copy } tabIndex={ tab }/> }
 		</>
@@ -102,9 +109,11 @@ function Actions({ contact, interactive }: {
 function Rows({ interactive }: {
 	interactive: boolean
 }) {
+	const { contacts } = useContactContent();
+	
 	return (
 		<ul className={ styles.rows }>
-			{ CONTACTS.map((c) => (
+			{ contacts.map((c) => (
 				<li key={ c.id } className={ styles.row }>
 					<span className={ styles.rowLabel }>{ c.label }</span>
 					<span className={ styles.rowValue }>{ c.display }</span>
@@ -122,20 +131,22 @@ function StopBody({ stop, interactive }: {
 	index: number;
 	interactive: boolean
 }) {
+	const { ui } = useContactContent();
+	
 	if (stop.kind === 'intro') {
 		return (
 			<div className={ styles.panel }>
-				<p className={ styles.eyebrow }>{ INTRO.eyebrow }</p>
-				<h1 className={ styles.title }>{ INTRO.heading }</h1>
-				<p className={ styles.body }>{ INTRO.body }</p>
+				<p className={ styles.eyebrow }>{ ui.intro.eyebrow }</p>
+				<h1 className={ styles.title }>{ ui.intro.heading }</h1>
+				<p className={ styles.body }>{ ui.intro.body }</p>
 			</div>
 		);
 	}
 	if (stop.kind === 'final') {
 		return (
 			<div className={ `${ styles.panel } ${ styles.panelWide }` }>
-				<p className={ styles.eyebrow }>{ FINAL.eyebrow }</p>
-				<h2 className={ styles.heading }>{ FINAL.heading }</h2>
+				<p className={ styles.eyebrow }>{ ui.final.eyebrow }</p>
+				<h2 className={ styles.heading }>{ ui.final.heading }</h2>
 				<Rows interactive={ interactive }/>
 			</div>
 		);
@@ -158,6 +169,7 @@ export default function ContactStage() {
 	const trackRef = useRef<HTMLDivElement>(null);
 	const progress = useScrollProgress(trackRef, !reducedMotion);
 	const active = useActiveStop(progress, !reducedMotion);
+	const { stops: STOPS, rail } = useStops();
 	
 	if (reducedMotion) {
 		return (
@@ -205,7 +217,7 @@ export default function ContactStage() {
 			} as CSSProperties }>
 				<Footer/>
 			</div>
-			<SectionRail trackRef={ trackRef } sections={ RAIL }/>
+			<SectionRail trackRef={ trackRef } sections={ rail }/>
 		</PinnedTrack>
 	);
 }

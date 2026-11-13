@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useContactContent } from '../contactContent';
 
 type Props = {
 	value: string;
@@ -7,6 +8,7 @@ type Props = {
 };
 
 export default function CopyButton({ value, className, tabIndex }: Props) {
+	const { ui } = useContactContent();
 	const [state, setState] = useState<'idle' | 'done' | 'fail'>('idle');
 	const timer = useRef(0);
 	
@@ -25,7 +27,7 @@ export default function CopyButton({ value, className, tabIndex }: Props) {
 	
 	return (
 		<button type="button" className={ className } onClick={ copy } tabIndex={ tabIndex } aria-live="polite">
-			{ state === 'done' ? 'COPIED' : state === 'fail' ? 'COPY FAILED' : 'COPY' }
+			{ state === 'done' ? ui.copied : state === 'fail' ? ui.copyFailed : ui.copy }
 		</button>
 	);
 }

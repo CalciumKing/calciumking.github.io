@@ -1,4 +1,4 @@
-import { type CSSProperties, useCallback, useRef } from 'react';
+import { type CSSProperties, useCallback, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from '../../../components/Footer/Footer';
 import PinnedTrack from '../../../components/PinnedTrack/PinnedTrack';
@@ -9,15 +9,14 @@ import { useProgressRange } from '../../../hooks/useProgressRange';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
 import type { SceneFactory } from '../../../hooks/useThreeScene';
-import { type Phase, PHASES } from '../aboutContent';
+import { type Phase, PHASE_AT, usePhases } from '../aboutContent';
 import { createMachineScene } from '../machine/createMachine';
 import styles from './AboutStage.module.css';
 
 type Progress = {
 	current: number
 };
-const RAIL = PHASES.map(({ label, at }) => ({ label, at }));
-const STATIC: Progress[] = PHASES.map((p) => ({ current: p.at }));
+const STATIC: Progress[] = PHASE_AT.map((at) => ({ current: at }));
 
 type CanvasProps = {
 	progress: Progress;
@@ -80,6 +79,8 @@ export default function AboutStage() {
 	const trackRef = useRef<HTMLDivElement>(null);
 	const progress = useScrollProgress(trackRef, !reducedMotion);
 	const end = useProgressRange(progress, 0.8, 0.96, !reducedMotion);
+	const PHASES = usePhases();
+	const rail = useMemo(() => PHASES.map(({ label, at }) => ({ label, at })), [PHASES]);
 	
 	if (reducedMotion) {
 		return (
@@ -121,7 +122,7 @@ export default function AboutStage() {
 			<div className={ styles.footerSlot }>
 				<Footer/>
 			</div>
-			<SectionRail trackRef={ trackRef } sections={ RAIL } loop={ false }/>
+			<SectionRail trackRef={ trackRef } sections={ rail } loop={ false }/>
 		</PinnedTrack>
 	);
 }

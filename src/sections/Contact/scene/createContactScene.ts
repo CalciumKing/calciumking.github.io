@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { SceneHandle } from '../../../hooks/useThreeScene';
 import { MOBILE_MAX } from '../../../lib/layout';
 import { createRenderer } from '../../../lib/three/createRenderer';
-import { CONTACTS } from '../contactContent';
+import { CONTACT_BODIES } from '../contactContent';
 import { createRig } from './keyframes';
 import { buildSystem } from './parts';
 
@@ -26,7 +26,7 @@ export function createContactScene(container: HTMLElement, options: ContactScene
 	
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 1000);
-	const system = buildSystem(CONTACTS.map((c) => c.body));
+	const system = buildSystem(CONTACT_BODIES);
 	scene.add(system.root);
 	
 	const tanHalf = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));

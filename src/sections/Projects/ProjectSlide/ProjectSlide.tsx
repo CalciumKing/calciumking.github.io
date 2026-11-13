@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import ThreeCanvas from '../../../components/ThreeCanvas/ThreeCanvas';
-import type { Project } from '../projectsContent';
+import { Project, useProjectsUi } from '../projectsContent';
 import styles from './ProjectSlide.module.css';
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
 };
 
 export default function ProjectSlide({ project, stacked, reducedMotion, active = true, near = true }: Props) {
+	const { slide } = useProjectsUi();
 	const rootRef = useRef<HTMLElement>(null);
 	const visualRef = useRef<HTMLDivElement>(null);
 	const [visible, setVisible] = useState(false);
@@ -57,13 +58,13 @@ export default function ProjectSlide({ project, stacked, reducedMotion, active =
 					  <dl className={ styles.meta }>
 						  { role && (
 							  <div>
-								  <dt className={ styles.label }>ROLE</dt>
+								  <dt className={ styles.label }>{ slide.role }</dt>
 								  <dd className={ styles.value }>{ role }</dd>
 							  </div>
 						  ) }
 						  { technologies.length > 0 && (
 							  <div>
-								  <dt className={ styles.label }>TECHNOLOGIES</dt>
+								  <dt className={ styles.label }>{slide.technologies}</dt>
 								  <dd className={ styles.value }>{ technologies.join(' · ') }</dd>
 							  </div>
 						  ) }
@@ -76,12 +77,12 @@ export default function ProjectSlide({ project, stacked, reducedMotion, active =
 					  <div className={ styles.links }>
 						  { githubUrl && (
 							  <a className={ styles.link } href={ githubUrl } target="_blank" rel="noopener noreferrer">
-								  GITHUB ↗
+								  {slide.github}
 							  </a>
 						  ) }
 						  { liveUrl && (
 							  <a className={ styles.link } href={ liveUrl } target="_blank" rel="noopener noreferrer">
-								  LIVE PROJECT ↗
+								  {slide.live}
 							  </a>
 						  ) }
 					  </div>

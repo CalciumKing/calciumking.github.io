@@ -1,5 +1,7 @@
 import type { RefObject } from 'react';
 import { Link } from 'react-router-dom';
+import { useContent } from '../../../i18n/content';
+import { homeContent } from '../homeContent';
 import styles from './DirectorySection.module.css';
 
 type SectionProps = {
@@ -7,18 +9,11 @@ type SectionProps = {
 	treeRef?: RefObject<HTMLDivElement>;
 };
 
-const ENTRIES = [
-	{
-		label: 'PROJECTS',
-		to: '/projects',
-		description: 'Selected engineering work, software, and development projects.'
-	},
-	{ label: 'ABOUT', to: '/about', description: 'Background, capabilities, and personal introduction.' },
-	{ label: 'RESUME', to: '/resume', description: 'Professional experience, education, and qualifications.' },
-	{ label: 'CONTACT', to: '/contact', description: 'Contact information and correspondence.' }
-];
+const ROUTES = ['/projects', '/about', '/resume', '/contact'];
 
 export default function DirectorySection({ className, treeRef }: SectionProps) {
+	const c = useContent(homeContent).directory;
+	
 	return (
 		<section
 			className={ className ? `${ styles.section } ${ className }` : styles.section }
@@ -26,7 +21,7 @@ export default function DirectorySection({ className, treeRef }: SectionProps) {
 		>
 			<div className={ styles.inner }>
 				<div ref={ treeRef } className={ styles.tree }>
-					<p className={ styles.label }>// DIRECTORY</p>
+					<p className={ styles.label }>{ c.label }</p>
 					<h2 id="directory-title" className={ styles.root }>
 						~/CALCIUMKING
 					</h2>
@@ -35,10 +30,10 @@ export default function DirectorySection({ className, treeRef }: SectionProps) {
 							<li className={ styles.spineItem } aria-hidden="true">
 								<span className={ styles.spine } data-tree-line="v"/>
 							</li>
-							{ ENTRIES.map(({ label, to, description }) => (
-								<li key={ to } className={ styles.item }>
+							{ c.entries.map(({ label, description }, i) => (
+								<li key={ ROUTES[i] } className={ styles.item }>
 									<span className={ styles.branch } data-tree-line="h" aria-hidden="true"/>
-									<Link to={ to } className={ styles.link }>
+									<Link to={ ROUTES[i] } className={ styles.link }>
                                         <span className={ styles.text }>
                                             <span className={ styles.name }>
                                                 /{ label }

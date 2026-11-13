@@ -1,4 +1,4 @@
-import { type CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Footer from '../../../components/Footer/Footer';
 import PinnedTrack from '../../../components/PinnedTrack/PinnedTrack';
 import ScrollHint from '../../../components/ScrollHint/ScrollHint';
@@ -7,7 +7,7 @@ import ThreeCanvas from '../../../components/ThreeCanvas/ThreeCanvas';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useScrollProgress } from '../../../hooks/useScrollProgress';
 import type { SceneFactory } from '../../../hooks/useThreeScene';
-import { CATEGORY_LABEL, ENTRIES, type Entry, FINAL, INTRO, RESUME_URL } from '../resumeContent';
+import { type Entry, ENTRY_COUNT, RESUME_URL, useResumeContent } from '../resumeContent';
 import { createResumeScene } from '../scene/createResumeScene';
 import type { SceneStop } from '../scene/keyframes';
 import styles from './ResumeStage.module.css';
@@ -25,30 +25,35 @@ type Stop = {
 	no?: number;
 };
 
-const STOPS: Stop[] = [
-	{ id: 'intro', kind: 'intro', label: 'Resume', frame: 0 },
-	...ENTRIES.map((entry, i): Stop => ({
-		id: entry.id,
-		kind: 'entry',
-		label: entry.eyebrow,
-		frame: i + 1,
-		entry,
-		no: i + 1
-	})),
-	{ id: 'final', kind: 'final', label: 'Download', frame: ENTRIES.length + 1 }
+const META: Omit<Stop, 'label' | 'entry' | 'no'>[] = [
+	{ id: 'intro', kind: 'intro', frame: 0 },
+	...Array.from({ length: ENTRY_COUNT }, (_, i) => ({ id: `entry-${ i }`, kind: 'entry' as const, frame: i + 1 })),
+	{ id: 'final', kind: 'final', frame: ENTRY_COUNT + 1 }
 ];
-const N = STOPS.length;
+const N = META.length;
 const STEP = 1 / N;
 const FINAL_AT = (N - 1) * STEP;
 const FINAL_INDEX = N - 1;
 
-const SCENE_STOPS: SceneStop[] = STOPS.map((s) => ({
+const SCENE_STOPS: SceneStop[] = META.map((s) => ({
 	frame: s.frame,
 	shiftX: s.kind === 'final' ? 0 : 0.22,
 	shiftY: s.kind === 'final' ? 0.12 : 0
 }));
-const RAIL = STOPS.map((s, i) => ({ label: s.label, at: i * STEP }));
 const STATIC: Progress = { current: FINAL_AT };
+
+function useStops() {
+	const { entries, ui } = useResumeContent();
+	return useMemo(() => {
+		const stops: Stop[] = META.map((m, i) => {
+			if (m.kind === 'intro') return { ...m, label: ui.stopIntro };
+			if (m.kind === 'final') return { ...m, label: ui.stopFinal };
+			const entry = entries[i - 1];
+			return { ...m, id: entry.id, label: entry.eyebrow, entry, no: i };
+		});
+		return { stops, rail: stops.map((s, i) => ({ label: s.label, at: i * STEP })) };
+	}, [entries, ui]);
+}
 
 function useActiveStop(progress: Progress, enabled: boolean) {
 	const [active, setActive] = useState(0);
@@ -79,7 +84,7 @@ function ResumeCanvas({ progress, reducedMotion, inline, className }: {
 				...options,
 				progress,
 				stops: SCENE_STOPS,
-				stages: ENTRIES.length,
+				stages: ENTRY_COUNT,
 				inline
 			}),
 		[progress, inline]
@@ -91,15 +96,17 @@ function DownloadLink({ interactive, className }: {
 	interactive: boolean;
 	className: string
 }) {
+	const { ui } = useResumeContent();
+	
 	return (
 		<a
 			className={ className }
 			href={ RESUME_URL }
 			download
 			tabIndex={ interactive ? 0 : -1 }
-			aria-label="Download resume (PDF)"
+			aria-label={ ui.downloadAria }
 		>
-			DOWNLOAD RESUME ↓
+			{ ui.download }
 		</a>
 	);
 }
@@ -108,21 +115,23 @@ function StopBody({ stop, interactive }: {
 	stop: Stop;
 	interactive: boolean
 }) {
+	const { ui } = useResumeContent();
+	
 	if (stop.kind === 'intro') {
 		return (
 			<div className={ styles.panel }>
-				<p className={ styles.eyebrow }>{ INTRO.eyebrow }</p>
-				<h1 className={ styles.title }>{ INTRO.heading }</h1>
-				<p className={ styles.body }>{ INTRO.body }</p>
+				<p className={ styles.eyebrow }>{ ui.intro.eyebrow }</p>
+				<h1 className={ styles.title }>{ ui.intro.heading }</h1>
+				<p className={ styles.body }>{ ui.intro.body }</p>
 			</div>
 		);
 	}
 	if (stop.kind === 'final') {
 		return (
 			<div className={ `${ styles.panel } ${ styles.panelWide }` }>
-				<p className={ styles.eyebrow }>{ FINAL.eyebrow }</p>
-				<h2 className={ styles.heading }>{ FINAL.heading }</h2>
-				<p className={ styles.body }>{ FINAL.body }</p>
+				<p className={ styles.eyebrow }>{ ui.final.eyebrow }</p>
+				<h2 className={ styles.heading }>{ ui.final.heading }</h2>
+				<p className={ styles.body }>{ ui.final.body }</p>
 				<DownloadLink interactive={ interactive } className={ styles.download }/>
 			</div>
 		);
@@ -132,7 +141,7 @@ function StopBody({ stop, interactive }: {
 		<div className={ styles.panel }>
 			<p className={ styles.eyebrow }>{ `// ${ e.eyebrow }` }</p>
 			<h2 className={ styles.heading }>{ e.title }</h2>
-			<p className={ styles.meta }>{ `${ e.date } · ${ CATEGORY_LABEL[e.category] }` }</p>
+			<p className={ styles.meta }>{ `${ e.date } · ${ ui.categories[e.category] }` }</p>
 			<p className={ styles.body }>{ e.description }</p>
 		</div>
 	);
@@ -143,6 +152,7 @@ export default function ResumeStage() {
 	const trackRef = useRef<HTMLDivElement>(null);
 	const progress = useScrollProgress(trackRef, !reducedMotion);
 	const active = useActiveStop(progress, !reducedMotion);
+	const { stops: STOPS, rail } = useStops();
 	
 	if (reducedMotion) {
 		return (
@@ -202,7 +212,7 @@ export default function ResumeStage() {
 				interactive={ !finalActive }
 				className={ `${ styles.dock } ${ finalActive ? styles.dockHidden : '' }` }
 			/>
-			<SectionRail trackRef={ trackRef } sections={ RAIL }/>
+			<SectionRail trackRef={ trackRef } sections={ rail }/>
 		</PinnedTrack>
 	);
 }
