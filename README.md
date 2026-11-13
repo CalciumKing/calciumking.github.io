@@ -1,21 +1,70 @@
-# Personal Developer Site
+# CalciumKing — Personal Portfolio
 
-Welcome to the repository for my personal developer site — a central hub for my projects, resume, and web experiments.
+An interactive personal portfolio built to showcase my engineering background, projects, professional experience, and technical interests.
 
-## 🚀 Overview
+**Live site:** [calciumking.github.io](https://calciumking.github.io/)
 
-This site showcases:
-- My current projects and case studies
-- A concise resume / CV
-- Contact information and social links
+## Overview
 
-## 🛠️ Tech Stack
+The portfolio combines a minimalist monochromatic design with interactive 3D visualizations and scroll-driven animations. Each page presents a different aspect of my work and background.
 
-- **Languages:** HTML, CSS, JavaScript
-- **Hosting:** GitHub Pages
+- **Home** — Introduction to my engineering identity and technical interests.
+- **About** — Personal background and engineering perspective.
+- **Projects** — Selected software, engineering, and independent development work.
+- **Resume** — Professional experience, education, and academic milestones.
+- **Contact** — Contact information and external profiles.
+- **404** — An interactive geometric Carnotaurus skeletal reconstruction.
 
-## 👀 How To View
+## Technology
 
-1. Go to your web browser
-2. Enter `calciumking.github.io` into the search bar
-3. Explore!
+- **Framework:** React
+- **Language:** TypeScript
+- **3D Graphics:** Three.js
+- **Build Tool:** Vite
+- **Styling:** CSS Modules and custom CSS
+- **Deployment:** GitHub Pages
+- **Analytics:** Umami
+
+## Design
+
+The site uses a restrained black-and-white visual system inspired by technical drawings, geometric modeling, and engineering visualization.
+
+Interactive scenes incorporate procedural geometry, wireframe structures, camera movement, and scroll-driven animation.
+
+## Languages
+
+The portfolio supports English and Russian, with a language toggle available throughout the website.
+
+English (EN): Default language
+
+Russian (RU): Fully translated interface and content
+
+Language preferences are saved automatically and persist across pages and visits.
+
+## Development
+
+### Requirements
+
+- Node.js
+- npm
+
+### Setup
+
+```bash
+git clone https://github.com/CalciumKing/calciumking.github.io.git
+cd calciumking.github.io
+npm install
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build
+```
+
+The production build is generated in `dist/`.
+
+## Deployment
+
+The site is hosted through GitHub Pages and deployed from the `master` branch.
