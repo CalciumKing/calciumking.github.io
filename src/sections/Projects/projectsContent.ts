@@ -14,8 +14,6 @@ export type Project = {
 	scene?: SceneFactory;
 };
 
-type ProjectId = 'nexar-solutions' | 'slac-inventory' | 'calciumking-portfolio' | 'heimdall' | 'arch-dotfiles'
-                 | 'oc-cosmetology';
 type ProjectText = {
 	tagline: string;
 	name: string;
@@ -24,13 +22,18 @@ type ProjectText = {
 };
 
 const STRUCTURE: {
-	id: ProjectId;
+	id: string;
 	technologies: string[];
 	githubUrl?: string;
 	liveUrl?: string;
 	scene?: SceneFactory
 }[] = [
 	{ id: 'nexar-solutions', technologies: [], liveUrl: 'https://nexartech.net/' },
+	{
+		id: 'promethean',
+		technologies: ['TypeScript', 'React', 'Kotlin', 'Vite', 'Three.js'],
+		githubUrl: 'https://github.com/9th-Floor-Developers/The-Promethean-Experiment'
+	},
 	{
 		id: 'slac-inventory',
 		technologies: ['Python', 'PyQt', 'PyTest', 'MySQL'],
@@ -70,6 +73,12 @@ const text = bilingual(
 					description: 'Commercial software and business development, including websites, AI chatbots, and automation systems.',
 					role: 'Co-founder / CTO'
 				},
+				'promethean': {
+					tagline: 'RECOGNIZED FOR INNOVATION',
+					name: 'The Promethean Experiment',
+					description: 'Dynamic machine-learning evolution simulator, engineered to evaluate a scientific conjecture related to the Fermi Paradox. Won 2nd place in UMass Amherst\'s HackUMass — a national hackathon.',
+					role: 'Co-Developer'
+				},
 				'slac-inventory': {
 					tagline: 'PRECISION AT SCALE',
 					name: 'SLAC Inventory Management',
@@ -82,7 +91,7 @@ const text = bilingual(
 					description: 'This personal developer portfolio website, featuring interactive 3D wireframe visuals and a scroll-driven experiences.',
 					role: 'Full-Stack Solo Developer'
 				},
-				heimdall: {
+				'heimdall': {
 					tagline: 'BEYOND THE BLACK BOX',
 					name: 'Heimdall',
 					description: 'A configurable neural network designed to train on diverse datasets, exploring pattern recognition and learning across different types of data.',
@@ -99,7 +108,7 @@ const text = bilingual(
 					description: 'A scheduling and service-tracking application for the Old Colony Regional Vocational Technical High School cosmetology program, built for real use.',
 					role: 'Full-Stack Solo Developer'
 				}
-			} as Record<ProjectId, ProjectText>,
+			} as Record<string, ProjectText>,
 			ui: {
 				hero: {
 					eyebrow: '/PROJECTS',
@@ -119,6 +128,12 @@ const text = bilingual(
 					description: 'Коммерческое программное обеспечение и развитие бизнеса: сайты, ИИ-чат-боты и системы автоматизации.',
 					role: 'Сооснователь / CTO'
 				},
+				'promethean': {
+					tagline: 'ОТМЕЧЕНО ЗА ИННОВАЦИОННОСТЬ',
+					name: 'The Promethean Experiment',
+					description: 'Динамический симулятор эволюции на основе машинного обучения, разработанный для проверки научной гипотезы, связанной с парадоксом Ферми. Занял 2-е место на HackUMass в Массачусетском университете в Амхерсте — общенациональном хакатоне.',
+					role: 'Соразработчик'
+				},
 				'slac-inventory': {
 					tagline: 'ТОЧНОСТЬ В МАСШТАБЕ',
 					name: 'SLAC Inventory Management',
@@ -131,7 +146,7 @@ const text = bilingual(
 					description: 'Этот личный сайт-портфолио разработчика с интерактивными 3D-каркасными визуализациями и сценариями, управляемыми прокруткой.',
 					role: 'Full-Stack-разработчик (в одиночку)'
 				},
-				heimdall: {
+				'heimdall': {
 					tagline: 'ЗА ПРЕДЕЛАМИ ЧЁРНОГО ЯЩИКА',
 					name: 'Heimdall',
 					description: 'Настраиваемая нейронная сеть, которая обучается на разнообразных наборах данных и исследует распознавание закономерностей и обучение на данных разного типа.',
