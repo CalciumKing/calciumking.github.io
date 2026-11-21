@@ -20,22 +20,26 @@ export default function Navigation() {
 				<Link to="/" onClick={ toTop('/') } className={ styles.brand }>
 					~/CalciumKing
 				</Link>
-				<ul className={ styles.links }>
-					{ c.links.map(({ label, to }) => (
-						<li key={ to } className={ styles.item }>
-							<NavLink
-								to={ to }
-								onClick={ toTop(to) }
-								className={ ({ isActive }) =>
-									isActive ? `${ styles.link } ${ styles.active }` : styles.link
-								}
-							>
-								{ label }
-							</NavLink>
-						</li>
-					)) }
-					<li className={ styles.item }><LanguageToggle/></li>
-				</ul>
+				<div className={ styles.right }>
+					<ul className={ styles.links }>
+						{ c.links.map(({ label, to }) => (
+							<li key={ to } className={ styles.item }>
+								<NavLink
+									to={ to }
+									onClick={ toTop(to) }
+									className={ ({ isActive }) =>
+										isActive ? `${ styles.link } ${ styles.active }` : styles.link
+									}
+								>
+									{ label }
+								</NavLink>
+							</li>
+						)) }
+					</ul>
+					<div className={ styles.lang }>
+						<LanguageToggle/>
+					</div>
+				</div>
 			</nav>
 		</header>
 	);
